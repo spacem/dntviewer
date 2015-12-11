@@ -39,6 +39,10 @@
                 }
             });
         }
+        
+        function setLocation(location) {
+          $('#fileLocation').val(location);
+        }
     </script>
   </head>
   
@@ -52,7 +56,8 @@
                 Put a URL for the dnt/xml files below or use the <a href=".">main ui</a> to add files manually.
                 </p>
                 <span>File Location:</span>
-                <input id="fileLocation" type="text" onchange="setupLinks();" value="https://spacedb.firebaseapp.com/nov15" />
+                <input id="fileLocation" type="text" onchange="setupLinks();" />
+                <a href="#" onclick="setLocation('https://spacedb.firebaseapp.com/nov15');return false;" >NA Nov 2015</a>
                 
                 <h2>Classes</h2>
                 <a href=".#dnt=jobtable.dnt">jobtable</a> <span></span><br />
