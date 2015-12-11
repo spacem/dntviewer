@@ -1,0 +1,624 @@
+<!doctype html>
+<html>
+  <head>
+    <script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
+    
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="dntviewer.css">
+    
+    <script>
+        function hostedFilesPageInit() {
+            var links = $("a").each(function() {
+                var fileLocation = $('#fileLocation');
+                fileLocation.val(localStorage.getItem('location'));
+                
+                var href = $(this).attr('href');
+                if(href.indexOf('.#dnt') == 0) {
+                    $(this).click(function(event) {
+                        if(fileLocation.val()  == "" || fileLocation.val() == null) {
+                            alert('Cannot open until file location is set.');
+                            event.preventDefault();
+                        }
+                        else {
+                          localStorage.setItem('location', fileLocation.val());
+                        }
+                        });
+                }
+            });
+            
+            setupLinks();
+        }
+        
+        function setupLinks() {
+            var links = $("a").each(function() {
+                var fileLocation = $('#fileLocation');
+                var href = $(this).attr('href');
+                if(href.indexOf('.#dnt') == 0) {
+                    $(this).attr('href', href + "&location=" + fileLocation.val());
+                }
+            });
+        }
+    </script>
+  </head>
+  
+  <body onload="hostedFilesPageInit();">
+      
+    <div class="container-fluid">
+        <h1>DNT Viewer <small>Look at some DNT files</small></h1>
+        <div class="row">
+            <div class="col-xs-12">
+                <p>
+                Put a URL for the dnt/xml files below or use the <a href=".">main ui</a> to add files manually.
+                </p>
+                <span>File Location:</span>
+                <input id="fileLocation" type="text" onchange="setupLinks();" value="https://spacedb.firebaseapp.com/nov15" />
+                
+                <h2>Classes</h2>
+                <a href=".#dnt=jobtable.dnt">jobtable</a> <span></span><br />
+                
+                <h2>Equipment</h2>
+                
+                <a href=".#dnt=itemtable_equipment.dnt">itemtable_equipment</a>
+                <ul>
+                  <li>Equipment names made up of fields in NameIDParam.</li>
+                  <li> EnchantID can be used to look up the item in enchanttable.</li>
+                  <li>SellAmount has npc sell cost</li>
+                  <li>LevelLimit required level to use the item</li>
+                  <li>NeedJobClass set for items that only certain class can use</li>
+                </ul>
+                <a href=".#dnt=enchanttable.dnt">enchanttable</a> <span></span><br />
+                <ul>
+                  <li>Use EnchantID from itemtable_equipment to find the equipment</li>
+                  <li>The extra stats from enchantmetn are stored in the statevalue columns</li>
+                  <li>Cost of the enhancement is stored in the NeedCoin column</li>
+                  <li>Lustres, etc required are in the NeedItem columns - look up that id in itemtable to find the name of the item</li>
+                </ul>
+                <a href=".#dnt=itemtable.dnt">itemtable</a> <span></span><br />
+                <a href=".#dnt=itemtable_talisman.dnt">itemtable_talisman</a> <span></span><br />
+                <ul>
+                  <li>Items..</li>
+                </ul>
+                <a href=".#dnt=itemtable_skilllevelup.dnt">itemtable_skilllevelup</a> <span></span><br />
+                <ul><li>Technique Accessories</li></ul>
+                  
+                <h2>Reboot</h2>
+                <a href=".#dnt=enchanttable_reboot.dnt">enchanttable_reboot</a> <span></span><br />
+                <a href=".#dnt=itemgaintable_reboot.dnt">itemgaintable_reboot</a> <span></span><br />
+                <a href=".#dnt=itemtable_reboot.dnt">itemtable_reboot</a> <span></span><br />
+                <a href=".#dnt=partstable_reboot.dnt">partstable_reboot</a> <span></span><br />
+                <a href=".#dnt=potentialtable_reboot.dnt">potentialtable_reboot</a> <span></span><br />
+                <a href=".#dnt=rebootplayerweighttable.dnt">rebootplayerweighttable</a> <span></span><br />
+                <a href=".#dnt=weapontable_reboot.dnt">weapontable_reboot</a> <span></span><br />
+                <ul>
+                  <li>Level90/T5 stuff are in these</li>
+                </ul>
+                
+                <h2>Class Skills</h2>
+                <ul>
+                  <li>Get the id from the skill table and match against the SkillIndex in the skillleveltable</li>
+                </ul>
+                <a href=".#dnt=skilltable_characteracademic.dnt">skilltable_characteracademic</a> <span></span><br />
+                <a href=".#dnt=skillleveltable_characteracademicpve.dnt">skillleveltable_characteracademicpve</a> <span></span><br />
+                <a href=".#dnt=skillleveltable_characteracademicpvp.dnt">skillleveltable_characteracademicpvp</a> <span></span><br />
+                <br />
+                <a href=".#dnt=skilltable_characterarcher.dnt">skilltable_characterarcher</a> <span></span><br />
+                <a href=".#dnt=skillleveltable_characterarcherpve.dnt">skillleveltable_characterarcherpve</a> <span></span><br />
+                <a href=".#dnt=skillleveltable_characterarcherpvp.dnt">skillleveltable_characterarcherpvp</a> <span></span><br />
+                <br />
+                <a href=".#dnt=skilltable_characterassassin.dnt">skilltable_characterassassin</a> <span></span><br />
+                <a href=".#dnt=skillleveltable_characterassassinpve.dnt">skillleveltable_characterassassinpve</a> <span></span><br />
+                <a href=".#dnt=skillleveltable_characterassassinpvp.dnt">skillleveltable_characterassassinpvp</a> <span></span><br />
+                <br />
+                <a href=".#dnt=skilltable_charactercleric.dnt">skilltable_charactercleric</a> <span></span><br />
+                <a href=".#dnt=skillleveltable_characterclericpve.dnt">skillleveltable_characterclericpve</a> <span></span><br />
+                <a href=".#dnt=skillleveltable_characterclericpvp.dnt">skillleveltable_characterclericpvp</a> <span></span><br />
+                <br />
+                <a href=".#dnt=skilltable_characterkali.dnt">skilltable_characterkali</a> <span></span><br />
+                <a href=".#dnt=skillleveltable_characterkalipve.dnt">skillleveltable_characterkalipve</a> <span></span><br />
+                <a href=".#dnt=skillleveltable_characterkalipvp.dnt">skillleveltable_characterkalipvp</a> <span></span><br />
+                <br />
+                <a href=".#dnt=skilltable_characterlencea.dnt">skilltable_characterlencea</a> <span></span><br />
+                <a href=".#dnt=skillleveltable_characterlenceapve.dnt">skillleveltable_characterlenceapve</a> <span></span><br />
+                <a href=".#dnt=skillleveltable_characterlenceapvp.dnt">skillleveltable_characterlenceapvp</a> <span></span><br />
+                <br />
+                <a href=".#dnt=skilltable_charactermachina.dnt">skilltable_charactermachina</a> <span></span><br />
+                <a href=".#dnt=skillleveltable_charactermachinapve.dnt">skillleveltable_charactermachinapve</a> <span></span><br />
+                <a href=".#dnt=skillleveltable_charactermachinapvp.dnt">skillleveltable_charactermachinapvp</a> <span></span><br />
+                <br />
+                <a href=".#dnt=skilltable_charactersoceress.dnt">skilltable_charactersoceress</a> <span></span><br />
+                <a href=".#dnt=skillleveltable_charactersoceresspve.dnt">skillleveltable_charactersoceresspve</a> <span></span><br />
+                <a href=".#dnt=skillleveltable_charactersoceresspvp.dnt">skillleveltable_charactersoceresspvp</a> <span></span><br />
+                <br />
+                <a href=".#dnt=skilltable_characterwarrior.dnt">skilltable_characterwarrior</a> <span></span><br />
+                <a href=".#dnt=skillleveltable_characterwarriorpve.dnt">skillleveltable_characterwarriorpve</a> <span></span><br />
+                <a href=".#dnt=skillleveltable_characterwarriorpvp.dnt">skillleveltable_characterwarriorpvp</a> <span></span><br />
+                
+
+                <h2>Other Skills</h2>
+                <a href=".#dnt=skilltable_characteretc.dnt">skilltable_characteretc</a> <span></span><br />
+                <a href=".#dnt=skillleveltable_characteretc.dnt">skillleveltable_characteretc</a> <span></span><br />
+                <ul><li>Looks like skill plates with other things</li></ul>
+                
+                <a href=".#dnt=skilltable_farm.dnt">skilltable_farm</a> <span></span><br />
+                <a href=".#dnt=skillleveltable_farm.dnt">skillleveltable_farm</a> <span></span><br />
+                <ul><li>Recipies</li></ul>
+
+                <a href=".#dnt=skilltable_totalskill.dnt">skilltable_totalskill</a> <span></span><br />
+                <a href=".#dnt=skillleveltable_totalskill.dnt">skillleveltable_totalskill</a> <span></span><br />
+                <ul><li>Unified Skills</li></ul>
+                
+                <a href=".#dnt=skilltable_bot.dnt">skilltable_bot</a> <span></span><br />
+                <a href=".#dnt=skillleveltable_bot.dnt">skillleveltable_bot</a> <span></span><br />
+                
+                <a href=".#dnt=skilltable_dragonjewelparts.dnt">skilltable_dragonjewelparts</a> <span></span><br />
+                <a href=".#dnt=skillleveltable_dragonjewelparts.dnt">skillleveltable_dragonjewelparts</a> <span></span><br />
+                
+                <a href=".#dnt=skilltable_dragonjewelweapon.dnt">skilltable_dragonjewelweapon</a> <span></span><br />
+                <a href=".#dnt=skillleveltable_dragonjewelweapon.dnt">skillleveltable_dragonjewelweapon</a> <span></span><br />
+
+                
+                <a href=".#dnt=skilltable_item.dnt">skilltable_item</a> <span></span><br />
+                <a href=".#dnt=skillleveltable_item.dnt">skillleveltable_item</a> <span></span><br />
+
+                <a href=".#dnt=skilltable_monster.dnt">skilltable_monster</a> <span></span><br />
+                <a href=".#dnt=skillleveltable_monster.dnt">skillleveltable_monster</a> <span></span><br />
+
+                <a href=".#dnt=skilltable_monsternest.dnt">skilltable_monsternest</a> <span></span><br />
+                <a href=".#dnt=skillleveltable_monsternest.dnt">skillleveltable_monsternest</a> <span></span><br />
+                
+                <a href=".#dnt=skilltable_monsterpvp.dnt">skilltable_monsterpvp</a> <span></span><br />
+                <a href=".#dnt=skillleveltable_monsterpve.dnt">skillleveltable_monsterpve</a> <span></span><br />
+                <a href=".#dnt=skillleveltable_monsterpvp.dnt">skillleveltable_monsterpvp</a> <span></span><br />
+
+                <a href=".#dnt=skilltable_monsterstage.dnt">skilltable_monsterstage</a> <span></span><br />
+                <a href=".#dnt=skillleveltable_monsterstage.dnt">skillleveltable_monsterstage</a> <span></span><br />
+
+                <a href=".#dnt=skilltable_pet.dnt">skilltable_pet</a> <span></span><br />
+                <a href=".#dnt=skillleveltable_pet.dnt">skillleveltable_pet</a> <span></span><br />
+
+                <a href=".#dnt=skilltable_prefixarm.dnt">skilltable_prefixarm</a> <span></span><br />
+                <a href=".#dnt=skillleveltable_prefixarm.dnt">skillleveltable_prefixarm</a> <span></span><br />
+
+                <a href=".#dnt=skilltable_prefixwep.dnt">skilltable_prefixwep</a> <span></span><br />
+                <a href=".#dnt=skillleveltable_prefixwep.dnt">skillleveltable_prefixwep</a> <span></span><br />
+
+                
+                <h2>PVE Enemy Stats</h2>
+                
+                <a href=".#dnt=monstertable.dnt">monstertable</a> <span></span><br />
+                <a href=".#dnt=monstertable_nest.dnt">monstertable_nest</a> <span></span><br />
+                  
+                <h2>No investigation done</h2>
+				
+                <a href=".#dnt=activemissiontable.dnt">activemissiontable</a> <span></span><br />
+                <a href=".#dnt=activesettable.dnt">activesettable</a> <span></span><br />
+                <a href=".#dnt=actorcannontable.dnt">actorcannontable</a> <span></span><br />
+                <a href=".#dnt=actorfacetable.dnt">actorfacetable</a> <span></span><br />
+                <a href=".#dnt=actortable.dnt">actortable</a> <span></span><br />
+                <a href=".#dnt=alteiaboardtable.dnt">alteiaboardtable</a> <span></span><br />
+                <a href=".#dnt=alteiapreviewrewardtable.dnt">alteiapreviewrewardtable</a> <span></span><br />
+                <a href=".#dnt=alteiaranktable.dnt">alteiaranktable</a> <span></span><br />
+                <a href=".#dnt=alteiatimetable.dnt">alteiatimetable</a> <span></span><br />
+                <a href=".#dnt=alteiaweekrewardtable.dnt">alteiaweekrewardtable</a> <span></span><br />
+                <a href=".#dnt=appellationtable.dnt">appellationtable</a> <span></span><br />
+                <a href=".#dnt=attackfxchangetable.dnt">attackfxchangetable</a> <span></span><br />
+                <a href=".#dnt=battlefieldadjustedtable.dnt">battlefieldadjustedtable</a> <span></span><br />
+                <a href=".#dnt=battlefieldscheduletable.dnt">battlefieldscheduletable</a> <span></span><br />
+                <a href=".#dnt=battlefieldstarpointtable.dnt">battlefieldstarpointtable</a> <span></span><br />
+                <a href=".#dnt=battlefieldtable.dnt">battlefieldtable</a> <span></span><br />
+                <a href=".#dnt=battlegroundmodesetting.dnt">battlegroundmodesetting</a> <span></span><br />
+                <a href=".#dnt=battlegroundresourcewar.dnt">battlegroundresourcewar</a> <span></span><br />
+                <a href=".#dnt=battlegroundskillleveltable.dnt">battlegroundskillleveltable</a> <span></span><br />
+                <a href=".#dnt=battlegroundskilltable.dnt">battlegroundskilltable</a> <span></span><br />
+                <a href=".#dnt=battlegroundskilltreetable.dnt">battlegroundskilltreetable</a> <span></span><br />
+                <a href=".#dnt=camtable.dnt">camtable</a> <span></span><br />
+                <a href=".#dnt=cashbuyshortcuttable.dnt">cashbuyshortcuttable</a> <span></span><br />
+                <a href=".#dnt=cashcommodity.dnt">cashcommodity</a> <span></span><br />
+                <a href=".#dnt=cashcommodity_guild.dnt">cashcommodity_guild</a> <span></span><br />
+                <a href=".#dnt=cashcompoundinfotable.dnt">cashcompoundinfotable</a> <span></span><br />
+                <a href=".#dnt=casherasabletypetable.dnt">casherasabletypetable</a> <span></span><br />
+                <a href=".#dnt=cashgoodsinfotable.dnt">cashgoodsinfotable</a> <span></span><br />
+                <a href=".#dnt=cashinventab.dnt">cashinventab</a> <span></span><br />
+                <a href=".#dnt=cashitemcompoundtable.dnt">cashitemcompoundtable</a> <span></span><br />
+                <a href=".#dnt=cashlimittable.dnt">cashlimittable</a> <span></span><br />
+                <a href=".#dnt=cashpackagetable.dnt">cashpackagetable</a> <span></span><br />
+                <a href=".#dnt=cashpresentreacttable.dnt">cashpresentreacttable</a> <span></span><br />
+                <a href=".#dnt=cashtabtable.dnt">cashtabtable</a> <span></span><br />
+                <a href=".#dnt=chaoscuberesulttable.dnt">chaoscuberesulttable</a> <span></span><br />
+                <a href=".#dnt=chaoscubestufftable.dnt">chaoscubestufftable</a> <span></span><br />
+                <a href=".#dnt=charmcounttable.dnt">charmcounttable</a> <span></span><br />
+                <a href=".#dnt=charmitemkeytable.dnt">charmitemkeytable</a> <span></span><br />
+                <a href=".#dnt=charmitemtable.dnt">charmitemtable</a> <span></span><br />
+                <a href=".#dnt=charmitemtable_common.dnt">charmitemtable_common</a> <span></span><br />
+                <a href=".#dnt=charmlimittable.dnt">charmlimittable</a> <span></span><br />
+                <a href=".#dnt=chatboxtable.dnt">chatboxtable</a> <span></span><br />
+                <a href=".#dnt=clearstandard.dnt">clearstandard</a> <span></span><br />
+                <a href=".#dnt=cointable.dnt">cointable</a> <span></span><br />
+                <a href=".#dnt=collectionbooktable.dnt">collectionbooktable</a> <span></span><br />
+                <a href=".#dnt=combinedshoptable.dnt">combinedshoptable</a> <span></span><br />
+                <a href=".#dnt=combinedshoptable_cash.dnt">combinedshoptable_cash</a> <span></span><br />
+                <a href=".#dnt=combinedshoptable_system.dnt">combinedshoptable_system</a> <span></span><br />
+                <a href=".#dnt=controlkey.dnt">controlkey</a> <span></span><br />
+                <a href=".#dnt=costumemixinfo.dnt">costumemixinfo</a> <span></span><br />
+                <a href=".#dnt=costumemixinfo_common2014.dnt">costumemixinfo_common2014</a> <span></span><br />
+                <a href=".#dnt=costumemixinfo_common2015.dnt">costumemixinfo_common2015</a> <span></span><br />
+                <a href=".#dnt=costumemixinfo_event.dnt">costumemixinfo_event</a> <span></span><br />
+                <a href=".#dnt=costumemixtable.dnt">costumemixtable</a> <span></span><br />
+                <a href=".#dnt=costumepreviewtable.dnt">costumepreviewtable</a> <span></span><br />
+                <a href=".#dnt=coupontable.dnt">coupontable</a> <span></span><br />
+                <a href=".#dnt=cptable.dnt">cptable</a> <span></span><br />
+                <a href=".#dnt=customdialogtable.dnt">customdialogtable</a> <span></span><br />
+                <a href=".#dnt=cutscenetable.dnt">cutscenetable</a> <span></span><br />
+                <a href=".#dnt=dailymissiontable.dnt">dailymissiontable</a> <span></span><br />
+                <a href=".#dnt=dailymissiontable_guild.dnt">dailymissiontable_guild</a> <span></span><br />
+                <a href=".#dnt=dailypartytable.dnt">dailypartytable</a> <span></span><br />
+                <a href=".#dnt=darkcharactereventtable.dnt">darkcharactereventtable</a> <span></span><br />
+                <a href=".#dnt=defaultcreatetable.dnt">defaultcreatetable</a> <span></span><br />
+                <a href=".#dnt=disjointorinfotable.dnt">disjointorinfotable</a> <span></span><br />
+                <a href=".#dnt=dlmaptable.dnt">dlmaptable</a> <span></span><br />
+                <a href=".#dnt=dlstagecleartable.dnt">dlstagecleartable</a> <span></span><br />
+                <a href=".#dnt=dngfanrewardtable.dnt">dngfanrewardtable</a> <span></span><br />
+                <a href=".#dnt=dngfriendshiptable.dnt">dngfriendshiptable</a> <span></span><br />
+                <a href=".#dnt=dngleveltable.dnt">dngleveltable</a> <span></span><br />
+                <a href=".#dnt=dngrewardtable.dnt">dngrewardtable</a> <span></span><br />
+                <a href=".#dnt=donationcompensationtable.dnt">donationcompensationtable</a> <span></span><br />
+                <a href=".#dnt=dragonjewelslottable.dnt">dragonjewelslottable</a> <span></span><br />
+                <a href=".#dnt=dragonjeweltable.dnt">dragonjeweltable</a> <span></span><br />
+                <a href=".#dnt=dropcontroltable.dnt">dropcontroltable</a> <span></span><br />
+                <a href=".#dnt=dwccreatetable.dnt">dwccreatetable</a> <span></span><br />
+                <a href=".#dnt=enchantjeweltable.dnt">enchantjeweltable</a> <span></span><br />
+                <a href=".#dnt=enchantjeweltable_commoncash.dnt">enchantjeweltable_commoncash</a> <span></span><br />
+                <a href=".#dnt=enchantmaintable.dnt">enchantmaintable</a> <span></span><br />
+                <a href=".#dnt=enchantmaxstatetable.dnt">enchantmaxstatetable</a> <span></span><br />
+                <a href=".#dnt=enchantneeditemtable.dnt">enchantneeditemtable</a> <span></span><br />
+                <a href=".#dnt=enchanttransferitemtable.dnt">enchanttransferitemtable</a> <span></span><br />
+                <a href=".#dnt=enchanttransfertable.dnt">enchanttransfertable</a> <span></span><br />
+                <a href=".#dnt=envieffecttable.dnt">envieffecttable</a> <span></span><br />
+                <a href=".#dnt=equalbasistable.dnt">equalbasistable</a> <span></span><br />
+                <a href=".#dnt=equalexponentvalue.dnt">equalexponentvalue</a> <span></span><br />
+                <a href=".#dnt=equalitemapplytable.dnt">equalitemapplytable</a> <span></span><br />
+                <a href=".#dnt=equalleveltable.dnt">equalleveltable</a> <span></span><br />
+                <a href=".#dnt=equalstatecontroltable.dnt">equalstatecontroltable</a> <span></span><br />
+                <a href=".#dnt=equalstatesettable.dnt">equalstatesettable</a> <span></span><br />
+                <a href=".#dnt=equipmatchactiontable.dnt">equipmatchactiontable</a> <span></span><br />
+                <a href=".#dnt=espcontrolkey.dnt">espcontrolkey</a> <span></span><br />
+                <a href=".#dnt=eventraidtable.dnt">eventraidtable</a> <span></span><br />
+                <a href=".#dnt=eventraidtimetable.dnt">eventraidtimetable</a> <span></span><br />
+                <a href=".#dnt=everydayeventtable.dnt">everydayeventtable</a> <span></span><br />
+                <a href=".#dnt=exchange.dnt">exchange</a> <span></span><br />
+                <a href=".#dnt=expadjustmenttable.dnt">expadjustmenttable</a> <span></span><br />
+                <a href=".#dnt=faceanimationtable.dnt">faceanimationtable</a> <span></span><br />
+                <a href=".#dnt=fairyexptable.dnt">fairyexptable</a> <span></span><br />
+                <a href=".#dnt=fairygrowleveltable.dnt">fairygrowleveltable</a> <span></span><br />
+                <a href=".#dnt=fairyshapetable.dnt">fairyshapetable</a> <span></span><br />
+                <a href=".#dnt=fairytable.dnt">fairytable</a> <span></span><br />
+                <a href=".#dnt=fairytable_guild.dnt">fairytable_guild</a> <span></span><br />
+                <a href=".#dnt=fairytypetable.dnt">fairytypetable</a> <span></span><br />
+                <a href=".#dnt=farmcultivatetable.dnt">farmcultivatetable</a> <span></span><br />
+                <a href=".#dnt=farmskintable.dnt">farmskintable</a> <span></span><br />
+                <a href=".#dnt=fatigueadjustmenttable.dnt">fatigueadjustmenttable</a> <span></span><br />
+                <a href=".#dnt=feattable.dnt">feattable</a> <span></span><br />
+                <a href=".#dnt=filetable.dnt">filetable</a> <span></span><br />
+                <a href=".#dnt=fishingareatable.dnt">fishingareatable</a> <span></span><br />
+                <a href=".#dnt=fishingeventtable.dnt">fishingeventtable</a> <span></span><br />
+                <a href=".#dnt=fishingpointtable.dnt">fishingpointtable</a> <span></span><br />
+                <a href=".#dnt=fishingrewardtable.dnt">fishingrewardtable</a> <span></span><br />
+                <a href=".#dnt=fishingrodtable.dnt">fishingrodtable</a> <span></span><br />
+                <a href=".#dnt=fishingtable.dnt">fishingtable</a> <span></span><br />
+                <a href=".#dnt=fracontrolkey.dnt">fracontrolkey</a> <span></span><br />
+                <a href=".#dnt=gachajp.dnt">gachajp</a> <span></span><br />
+                <a href=".#dnt=gachasetitemjp.dnt">gachasetitemjp</a> <span></span><br />
+                <a href=".#dnt=gachatable.dnt">gachatable</a> <span></span><br />
+                <a href=".#dnt=gachatable_common2014.dnt">gachatable_common2014</a> <span></span><br />
+                <a href=".#dnt=gachatable_common2015.dnt">gachatable_common2015</a> <span></span><br />
+                <a href=".#dnt=gachatable_event.dnt">gachatable_event</a> <span></span><br />
+                <a href=".#dnt=gercontrolkey.dnt">gercontrolkey</a> <span></span><br />
+                <a href=".#dnt=gesturetable.dnt">gesturetable</a> <span></span><br />
+                <a href=".#dnt=ghoulchampionrespawnskilltable.dnt">ghoulchampionr</a> <span></span><br />
+                <a href=".#dnt=wnskilltable.dnt">wnskilltable</a> <span></span><br />
+                <a href=".#dnt=ghoulchampionskilltable.dnt">ghoulchampionskilltable</a> <span></span><br />
+                <a href=".#dnt=ghoulchampiontable.dnt">ghoulchampiontable</a> <span></span><br />
+                <a href=".#dnt=ghoulconditiontable.dnt">ghoulconditiontable</a> <span></span><br />
+                <a href=".#dnt=globalevent.dnt">globalevent</a> <span></span><br />
+                <a href=".#dnt=globalweightinttable.dnt">globalweightinttable</a> <span></span><br />
+                <a href=".#dnt=globalweighttable.dnt">globalweighttable</a> <span></span><br />
+                <a href=".#dnt=glyphchargetable.dnt">glyphchargetable</a> <span></span><br />
+                <a href=".#dnt=glyphskilltable.dnt">glyphskilltable</a> <span></span><br />
+                <a href=".#dnt=glyphskilltable_cash.dnt">glyphskilltable_cash</a> <span></span><br />
+                <a href=".#dnt=glyphslottable.dnt">glyphslottable</a> <span></span><br />
+                <a href=".#dnt=guidemissiontable.dnt">guidemissiontable</a> <span></span><br />
+                <a href=".#dnt=guidepopup.dnt">guidepopup</a> <span></span><br />
+                <a href=".#dnt=guildinsigniatable.dnt">guildinsigniatable</a> <span></span><br />
+                <a href=".#dnt=guildleveltable.dnt">guildleveltable</a> <span></span><br />
+                <a href=".#dnt=guildmarktable.dnt">guildmarktable</a> <span></span><br />
+                <a href=".#dnt=guildmembermaxlv.dnt">guildmembermaxlv</a> <span></span><br />
+                <a href=".#dnt=guildmissiontable.dnt">guildmissiontable</a> <span></span><br />
+                <a href=".#dnt=guildrewardtable.dnt">guildrewardtable</a> <span></span><br />
+                <a href=".#dnt=guildtable.dnt">guildtable</a> <span></span><br />
+                <a href=".#dnt=guildusercaptable.dnt">guildusercaptable</a> <span></span><br />
+                <a href=".#dnt=guildwarehouse.dnt">guildwarehouse</a> <span></span><br />
+                <a href=".#dnt=guildwarmailtable.dnt">guildwarmailtable</a> <span></span><br />
+                <a href=".#dnt=guildwarpointtable.dnt">guildwarpointtable</a> <span></span><br />
+                <a href=".#dnt=helpbutton.dnt">helpbutton</a> <span></span><br />
+                <a href=".#dnt=helpkeywordtable.dnt">helpkeywordtable</a> <span></span><br />
+                <a href=".#dnt=helptable.dnt">helptable</a> <span></span><br />
+                <a href=".#dnt=herobattlefieldrankrewardtable.dnt">herobatt</a> <span></span><br />
+                <a href=".eldrankrewardtable.dnt">eldrankrewardtable</a> <span></span><br />
+                <a href=".#dnt=hidepartstable.dnt">hidepartstable</a> <span></span><br />
+                <a href=".#dnt=hotspringbufftable.dnt">hotspringbufftable</a> <span></span><br />
+                <a href=".#dnt=hotspringgirlscheduletable.dnt">hotspringgirlscheduletable</a> <span></span><br />
+                <a href=".#dnt=hotspringscheduletable.dnt">hotspringscheduletable</a> <span></span><br />
+                <a href=".#dnt=inputtextpopuptable.dnt">inputtextpopuptable</a> <span></span><br />
+                <a href=".#dnt=instantitemtable.dnt">instantitemtable</a> <span></span><br />
+                <a href=".#dnt=itemcategorytable.dnt">itemcategorytable</a> <span></span><br />
+                <a href=".#dnt=itemchangetable.dnt">itemchangetable</a> <span></span><br />
+                <a href=".#dnt=itemcompoundgrouptable.dnt">itemcompoundgrouptable</a> <span></span><br />
+                <a href=".#dnt=itemcompoundgrouptable_custom.dnt">itemcompoundgrouptable_custom</a> <span></span><br />
+                <a href=".#dnt=itemcompoundshoptable.dnt">itemcompoundshoptable</a> <span></span><br />
+                <a href=".#dnt=itemcompoundtable.dnt">itemcompoundtable</a> <span></span><br />
+                <a href=".#dnt=itemcompoundtable_custom.dnt">itemcompoundtable_custom</a> <span></span><br />
+                <a href=".#dnt=itemcompoundtable_glyph.dnt">itemcompoundtable_glyph</a> <span></span><br />
+                <a href=".#dnt=itemcompoundtable_jewel.dnt">itemcompoundtable_jewel</a> <span></span><br />
+                <a href=".#dnt=itemcompoundtable_renewal.dnt">itemcompoundtable_renewal</a> <span></span><br />
+                <a href=".#dnt=itemcompoundtable_set.dnt">itemcompoundtable_set</a> <span></span><br />
+                <a href=".#dnt=itemdropgrouptable.dnt">itemdropgrouptable</a> <span></span><br />
+                <a href=".#dnt=itemdropgrouptable_darklair.dnt">itemdropgrouptable_darklair</a> <span></span><br />
+                <a href=".#dnt=itemdropgrouptable_dnexpedition.dnt">itemdropgrouptable_dnexpedition</a> <span></span><br />
+                <a href=".#dnt=itemdropgrouptable_event.dnt">itemdropgrouptable_event</a> <span></span><br />
+                <a href=".#dnt=itemdropgrouptable_guildwar.dnt">itemdropgrouptable_guildwar</a> <span></span><br />
+                <a href=".#dnt=itemdropgrouptable_item.dnt">itemdropgrouptable_item</a> <span></span><br />
+                <a href=".#dnt=itemdropgrouptable_monsteritem.dnt">itemdropgrouptable_monsteritem</a> <span></span><br />
+                <a href=".#dnt=itemdropgrouptable_propdrop.dnt">itemdropgrouptable_propdrop</a> <span></span><br />
+                <a href=".#dnt=itemdropgrouptable_themepark.dnt">itemdropgrouptable_themepark</a> <span></span><br />
+                <a href=".#dnt=itemdroptable_abyss.dnt">itemdroptable_abyss</a> <span></span><br />
+                <a href=".#dnt=itemdroptable_apprentice.dnt">itemdroptable_apprentice</a> <span></span><br />
+                <a href=".#dnt=itemdroptable_compound.dnt">itemdroptable_compound</a> <span></span><br />
+                <a href=".#dnt=itemdroptable_cook.dnt">itemdroptable_cook</a> <span></span><br />
+                <a href=".#dnt=itemdroptable_darklair.dnt">itemdroptable_darklair</a> <span></span><br />
+                <a href=".#dnt=itemdroptable_dimension.dnt">itemdroptable_dimension</a> <span></span><br />
+                <a href=".#dnt=itemdroptable_disjoint.dnt">itemdroptable_disjoint</a> <span></span><br />
+                <a href=".#dnt=itemdroptable_dnexpedition.dnt">itemdroptable_dnexpedition</a> <span></span><br />
+                <a href=".#dnt=itemdroptable_event.dnt">itemdroptable_event</a> <span></span><br />
+                <a href=".#dnt=itemdroptable_farm.dnt">itemdroptable_farm</a> <span></span><br />
+                <a href=".#dnt=itemdroptable_fishing.dnt">itemdroptable_fishing</a> <span></span><br />
+                <a href=".#dnt=itemdroptable_guildwar.dnt">itemdroptable_guildwar</a> <span></span><br />
+                <a href=".#dnt=itemdroptable_item.dnt">itemdroptable_item</a> <span></span><br />
+                <a href=".#dnt=itemdroptable_monsteritem.dnt">itemdroptable_monsteritem</a> <span></span><br />
+                <a href=".#dnt=itemdroptable_propdrop.dnt">itemdroptable_propdrop</a> <span></span><br />
+                <a href=".#dnt=itemdroptable_pvp.dnt">itemdroptable_pvp</a> <span></span><br />
+                <a href=".#dnt=itemdroptable_randomcompound.dnt">itemdroptable_randomcompound</a> <span></span><br />
+                <a href=".#dnt=itemdroptable_stageclear.dnt">itemdroptable_stageclear</a> <span></span><br />
+                <a href=".#dnt=itemdroptable_themepark.dnt">itemdroptable_themepark</a> <span></span><br />
+                <a href=".#dnt=itemdroptable_union.dnt">itemdroptable_union</a> <span></span><br />
+                <a href=".#dnt=itemgaintable.dnt">itemgaintable</a> <span></span><br />
+                <a href=".#dnt=itemgaintable_dragonjewel.dnt">itemgaintable_dragonjewel</a> <span></span><br />
+                <a href=".#dnt=itemgaintable_etc.dnt">itemgaintable_etc</a> <span></span><br />
+                <a href=".#dnt=itemgaintable_talisman.dnt">itemgaintable_talisman</a> <span></span><br />
+                <a href=".#dnt=itemnoticetable.dnt">itemnoticetable</a> <span></span><br />
+                <a href=".#dnt=itemoption.dnt">itemoption</a> <span></span><br />
+                <a href=".#dnt=itemperiod.dnt">itemperiod</a> <span></span><br />
+                <a href=".#dnt=itemperiod_talismanitem.dnt">itemperiod_talismanitem</a> <span></span><br />
+                <a href=".#dnt=itemsort.dnt">itemsort</a> <span></span><br />
+                <a href=".#dnt=itemtable_abyss.dnt">itemtable_abyss</a> <span></span><br />
+                <a href=".#dnt=itemtable_apprentice.dnt">itemtable_apprentice</a> <span></span><br />
+                <a href=".#dnt=itemtable_award.dnt">itemtable_award</a> <span></span><br />
+                <a href=".#dnt=itemtable_cash.dnt">itemtable_cash</a> <span></span><br />
+                <a href=".#dnt=itemtable_common2014.dnt">itemtable_common2014</a> <span></span><br />
+                <a href=".#dnt=itemtable_common2015.dnt">itemtable_common2015</a> <span></span><br />
+                <a href=".#dnt=itemtable_commoncash.dnt">itemtable_commoncash</a> <span></span><br />
+                <a href=".#dnt=itemtable_cook.dnt">itemtable_cook</a> <span></span><br />
+                <a href=".#dnt=itemtable_dragonjewel.dnt">itemtable_dragonjewel</a> <span></span><br />
+                <a href=".#dnt=itemtable_enchant.dnt">itemtable_enchant</a> <span></span><br />
+                <a href=".#dnt=itemtable_etc.dnt">itemtable_etc</a> <span></span><br />
+                <a href=".#dnt=itemtable_event.dnt">itemtable_event</a> <span></span><br />
+                <a href=".#dnt=itemtable_farm.dnt">itemtable_farm</a> <span></span><br />
+                <a href=".#dnt=itemtable_favor.dnt">itemtable_favor</a> <span></span><br />
+                <a href=".#dnt=itemtable_fish.dnt">itemtable_fish</a> <span></span><br />
+                <a href=".#dnt=itemtable_glyph.dnt">itemtable_glyph</a> <span></span><br />
+                <a href=".#dnt=itemtable_guild.dnt">itemtable_guild</a> <span></span><br />
+                <a href=".#dnt=itemtable_monstercard.dnt">itemtable_monstercard</a> <span></span><br />
+                <a href=".#dnt=itemtable_projectile.dnt">itemtable_projectile</a> <span></span><br />
+                <a href=".#dnt=itemtable_projectilemonster.dnt">itemtable_projectilemonster</a> <span></span><br />
+                <a href=".#dnt=itemtable_pvp.dnt">itemtable_pvp</a> <span></span><br />
+                <a href=".#dnt=itemtable_quest.dnt">itemtable_quest</a> <span></span><br />
+                <a href=".#dnt=itemtable_skillbook.dnt">itemtable_skillbook</a> <span></span><br />
+                <a href=".#dnt=itemtable_source.dnt">itemtable_source</a> <span></span><br />
+                <a href=".#dnt=itemtable_test.dnt">itemtable_test</a> <span></span><br />
+                <a href=".#dnt=itemtable_themepark.dnt">itemtable_themepark</a> <span></span><br />
+                <a href=".#dnt=itemtable_vehicle.dnt">itemtable_vehicle</a> <span></span><br />
+                <a href=".#dnt=itemuseinfotable.dnt">itemuseinfotable</a> <span></span><br />
+                <a href=".#dnt=keepboxprovideitemtable.dnt">keepboxprovideitemtable</a> <span></span><br />
+                <a href=".#dnt=levelupboxchecktable.dnt">levelupboxchecktable</a> <span></span><br />
+                <a href=".#dnt=levelupeventtable.dnt">levelupeventtable</a> <span></span><br />
+                <a href=".#dnt=loadinganitable.dnt">loadinganitable</a> <span></span><br />
+                <a href=".#dnt=mailtable.dnt">mailtable</a> <span></span><br />
+                <a href=".#dnt=mainquestchaptertable.dnt">mainquestchaptertable</a> <span></span><br />
+                <a href=".#dnt=makeitemcookingtable.dnt">makeitemcookingtable</a> <span></span><br />
+                <a href=".#dnt=makeitemrecipetable.dnt">makeitemrecipetable</a> <span></span><br />
+                <a href=".#dnt=mapgatetable.dnt">mapgatetable</a> <span></span><br />
+                <a href=".#dnt=maptable.dnt">maptable</a> <span></span><br />
+                <a href=".#dnt=mastersysdecreasetable.dnt">mastersysdecreasetable</a> <span></span><br />
+                <a href=".#dnt=mastersysfeeltable.dnt">mastersysfeeltable</a> <span></span><br />
+                <a href=".#dnt=mastersysgaintable.dnt">mastersysgaintable</a> <span></span><br />
+                <a href=".#dnt=mercenarychattable.dnt">mercenarychattable</a> <span></span><br />
+                <a href=".#dnt=mercenarycombineresulttable.dnt">mercenarycombineresulttable</a> <span></span><br />
+                <a href=".#dnt=mercenarycombinetable.dnt">mercenarycombinetable</a> <span></span><br />
+                <a href=".#dnt=mercenaryleveltable.dnt">mercenaryleveltable</a> <span></span><br />
+                <a href=".#dnt=mercenarytable.dnt">mercenarytable</a> <span></span><br />
+                <a href=".#dnt=missionrewardtable.dnt">missionrewardtable</a> <span></span><br />
+                <a href=".#dnt=missionscheduletable.dnt">missionscheduletable</a> <span></span><br />
+                <a href=".#dnt=missiontable.dnt">missiontable</a> <span></span><br />
+                <a href=".#dnt=modesettable.dnt">modesettable</a> <span></span><br />
+                <a href=".#dnt=moncastageplayrewardtable.dnt">moncastageplayrewardtable</a> <span></span><br />
+                <a href=".#dnt=moncastagerankrewardtable.dnt">moncastagerankrewardtable</a> <span></span><br />
+                <a href=".#dnt=monsterbooktable.dnt">monsterbooktable</a> <span></span><br />
+                <a href=".#dnt=monstercardenchanttable.dnt">monstercardenchanttable</a> <span></span><br />
+                <a href=".#dnt=monstercompoundtable.dnt">monstercompoundtable</a> <span></span><br />
+                <a href=".#dnt=monstergolddroptable.dnt">monstergolddroptable</a> <span></span><br />
+                <a href=".#dnt=monstergrouptable.dnt">monstergrouptable</a> <span></span><br />
+                <a href=".#dnt=monstergrouptable_transform.dnt">monstergrouptable_transform</a> <span></span><br />
+                <a href=".#dnt=monsterpartstable.dnt">monsterpartstable</a> <span></span><br />
+                <a href=".#dnt=monsterradiochangetable.dnt">monsterradiochangetable</a> <span></span><br />
+                <a href=".#dnt=monsterradiomsgtable.dnt">monsterradiomsgtable</a> <span></span><br />
+                <a href=".#dnt=monstersettable.dnt">monstersettable</a> <span></span><br />
+                <a href=".#dnt=monsterskilltable.dnt">monsterskilltable</a> <span></span><br />
+                <a href=".#dnt=monsterskilltable_transform.dnt">monsterskilltable_transform</a> <span></span><br />
+                <a href=".#dnt=monstertable_bot.dnt">monstertable_bot</a> <span></span><br />
+                <a href=".#dnt=monstertable_champion.dnt">monstertable_champion</a> <span></span><br />
+                <a href=".#dnt=monstertable_darklair.dnt">monstertable_darklair</a> <span></span><br />
+                <a href=".#dnt=monstertable_event.dnt">monstertable_event</a> <span></span><br />
+                <a href=".#dnt=monstertable_quest.dnt">monstertable_quest</a> <span></span><br />
+                <a href=".#dnt=monstertable_transform.dnt">monstertable_transform</a> <span></span><br />
+                <a href=".#dnt=monsterweighttable.dnt">monsterweighttable</a> <span></span><br />
+                <a href=".#dnt=monsterweighttable_champ.dnt">monsterweighttable_champ</a> <span></span><br />
+                <a href=".#dnt=monsterweighttable_event.dnt">monsterweighttable_event</a> <span></span><br />
+                <a href=".#dnt=monsterweighttable_nest.dnt">monsterweighttable_nest</a> <span></span><br />
+                <a href=".#dnt=monsterweighttable_stage.dnt">monsterweighttable_stage</a> <span></span><br />
+                <a href=".#dnt=nameditemtable.dnt">nameditemtable</a> <span></span><br />
+                <a href=".#dnt=nesttraningmodetable.dnt">nesttraningmodetable</a> <span></span><br />
+                <a href=".#dnt=npcchatguideuisize.dnt">npcchatguideuisize</a> <span></span><br />
+                <a href=".#dnt=npchidetable.dnt">npchidetable</a> <span></span><br />
+                <a href=".#dnt=npcreactiontable.dnt">npcreactiontable</a> <span></span><br />
+                <a href=".#dnt=npctable.dnt">npctable</a> <span></span><br />
+                <a href=".#dnt=partstable.dnt">partstable</a> <span></span><br />
+                <a href=".#dnt=partstable_cash.dnt">partstable_cash</a> <span></span><br />
+                <a href=".#dnt=partstable_common2014.dnt">partstable_common2014</a> <span></span><br />
+                <a href=".#dnt=partstable_common2015.dnt">partstable_common2015</a> <span></span><br />
+                <a href=".#dnt=partstable_commoncash.dnt">partstable_commoncash</a> <span></span><br />
+                <a href=".#dnt=partstable_equipment.dnt">partstable_equipment</a> <span></span><br />
+                <a href=".#dnt=partstable_event.dnt">partstable_event</a> <span></span><br />
+                <a href=".#dnt=partstable_guild.dnt">partstable_guild</a> <span></span><br />
+                <a href=".#dnt=partstable_pvp.dnt">partstable_pvp</a> <span></span><br />
+                <a href=".#dnt=partstable_skilllevelup.dnt">partstable_skilllevelup</a> <span></span><br />
+                <a href=".#dnt=partstable_test.dnt">partstable_test</a> <span></span><br />
+                <a href=".#dnt=partylistsortweight.dnt">partylistsortweight</a> <span></span><br />
+                <a href=".#dnt=pccaferenttable.dnt">pccaferenttable</a> <span></span><br />
+                <a href=".#dnt=pccafetable.dnt">pccafetable</a> <span></span><br />
+                <a href=".#dnt=petfoodtable.dnt">petfoodtable</a> <span></span><br />
+                <a href=".#dnt=petinventab.dnt">petinventab</a> <span></span><br />
+                <a href=".#dnt=petleveltable.dnt">petleveltable</a> <span></span><br />
+                <a href=".#dnt=platetable.dnt">platetable</a> <span></span><br />
+                <a href=".#dnt=playercommonleveltable.dnt">playercommonleveltable</a> <span></span><br />
+                <a href=".#dnt=playercustomeventui.dnt">playercustomeventui</a> <span></span><br />
+                <a href=".#dnt=playerleveltable.dnt">playerleveltable</a> <span></span><br />
+                <a href=".#dnt=playerweighttable.dnt">playerweighttable</a> <span></span><br />
+                <a href=".#dnt=popuptable.dnt">popuptable</a> <span></span><br />
+                <a href=".#dnt=potentialjeweltable.dnt">potentialjeweltable</a> <span></span><br />
+                <a href=".#dnt=potentialjeweltable_abyss.dnt">potentialjeweltable_abyss</a> <span></span><br />
+                <a href=".#dnt=potentialjeweltable_event.dnt">potentialjeweltable_event</a> <span></span><br />
+                <a href=".#dnt=potentialtable.dnt">potentialtable</a> <span></span><br />
+                <a href=".#dnt=potentialtable_cash.dnt">potentialtable_cash</a> <span></span><br />
+                <a href=".#dnt=potentialtable_dragonjewel.dnt">potentialtable_dragonjewel</a> <span></span><br />
+                <a href=".#dnt=potentialtable_glyph.dnt">potentialtable_glyph</a> <span></span><br />
+                <a href=".#dnt=potentialtable_potentialjewel.dnt">potentialtable_potentialjewel</a> <span></span><br />
+                <a href=".#dnt=potentialtable_talismanitem.dnt">potentialtable_talismanitem</a> <span></span><br />
+                <a href=".#dnt=potentialtransfertable.dnt">potentialtransfertable</a> <span></span><br />
+                <a href=".#dnt=presenttable.dnt">presenttable</a> <span></span><br />
+                <a href=".#dnt=proptable.dnt">proptable</a> <span></span><br />
+                <a href=".#dnt=propvisiblescheduletable.dnt">propvisiblescheduletable</a> <span></span><br />
+                <a href=".#dnt=pvpdefaultroomnametable.dnt">pvpdefaultroomnametable</a> <span></span><br />
+                <a href=".#dnt=pvpgamemodeskillsetting.dnt">pvpgamemodeskillsetting</a> <span></span><br />
+                <a href=".#dnt=pvpgamemodetable.dnt">pvpgamemodetable</a> <span></span><br />
+                <a href=".#dnt=pvpgamestartconditiontable.dnt">pvpgamestartconditiontable</a> <span></span><br />
+                <a href=".#dnt=pvpguildwarmapmaketable.dnt">pvpguildwarmapmaketable</a> <span></span><br />
+                <a href=".#dnt=pvpladderrewardtable.dnt">pvpladderrewardtable</a> <span></span><br />
+                <a href=".#dnt=pvpmaptable.dnt">pvpmaptable</a> <span></span><br />
+                <a href=".#dnt=pvpmissionroomscheduletable.dnt">pvpmissionroomscheduletable</a> <span></span><br />
+                <a href=".#dnt=pvpmissionroomtable.dnt">pvpmissionroomtable</a> <span></span><br />
+                <a href=".#dnt=pvprankrewardtable.dnt">pvprankrewardtable</a> <span></span><br />
+                <a href=".#dnt=pvpranktable.dnt">pvpranktable</a> <span></span><br />
+                <a href=".#dnt=pvpteambalancetable.dnt">pvpteambalancetable</a> <span></span><br />
+                <a href=".#dnt=questchaptertable.dnt">questchaptertable</a> <span></span><br />
+                <a href=".#dnt=questdailytable.dnt">questdailytable</a> <span></span><br />
+                <a href=".#dnt=questlevelcabrewardtable.dnt">questlevelcabrewardtable</a> <span></span><br />
+                <a href=".#dnt=questrecycletable.dnt">questrecycletable</a> <span></span><br />
+                <a href=".#dnt=questremotetable.dnt">questremotetable</a> <span></span><br />
+                <a href=".#dnt=questrewardtable.dnt">questrewardtable</a> <span></span><br />
+                <a href=".#dnt=questskiptable.dnt">questskiptable</a> <span></span><br />
+                <a href=".#dnt=questtable.dnt">questtable</a> <span></span><br />
+                <a href=".#dnt=radiomsgtable.dnt">radiomsgtable</a> <span></span><br />
+                <a href=".#dnt=recordtable.dnt">recordtable</a> <span></span><br />
+                <a href=".#dnt=reputebenefit.dnt">reputebenefit</a> <span></span><br />
+                <a href=".#dnt=reputetable.dnt">reputetable</a> <span></span><br />
+                <a href=".#dnt=resorcewarskin.dnt">resorcewarskin</a> <span></span><br />
+                <a href=".#dnt=resurrectiontable.dnt">resurrectiontable</a> <span></span><br />
+                <a href=".#dnt=scheduletable.dnt">scheduletable</a> <span></span><br />
+                <a href=".#dnt=sealcounttable.dnt">sealcounttable</a> <span></span><br />
+                <a href=".#dnt=sealenchanttable.dnt">sealenchanttable</a> <span></span><br />
+                <a href=".#dnt=sealgradetable.dnt">sealgradetable</a> <span></span><br />
+                <a href=".#dnt=secondaryskillleveltable.dnt">secondaryskillleveltable</a> <span></span><br />
+                <a href=".#dnt=secondaryskilltable.dnt">secondaryskilltable</a> <span></span><br />
+                <a href=".#dnt=setitemtable.dnt">setitemtable</a> <span></span><br />
+                <a href=".#dnt=setitemtable_cash.dnt">setitemtable_cash</a> <span></span><br />
+                <a href=".#dnt=setstringidtable.dnt">setstringidtable</a> <span></span><br />
+                <a href=".#dnt=shoptable.dnt">shoptable</a> <span></span><br />
+                <a href=".#dnt=skillbubbledefine.dnt">skillbubbledefine</a> <span></span><br />
+                <a href=".#dnt=skillbubbletable.dnt">skillbubbletable</a> <span></span><br />
+                <a href=".#dnt=skillbubbletable_pve.dnt">skillbubbletable_pve</a> <span></span><br />
+                <a href=".#dnt=skillbubbletable_pvp.dnt">skillbubbletable_pvp</a> <span></span><br />
+                <a href=".#dnt=skillendgravitycontroltable.dnt">skillendgravitycontroltable</a> <span></span><br />
+                
+                
+                <a href=".#dnt=skillshoptable.dnt">skillshoptable</a> <span></span><br />
+                <a href=".#dnt=skilltreeadvicetable.dnt">skilltreeadvicetable</a> <span></span><br />
+                <a href=".#dnt=skilltreetable.dnt">skilltreetable</a> <span></span><br />
+                <a href=".#dnt=skillvideotable.dnt">skillvideotable</a> <span></span><br />
+                <a href=".#dnt=staffrolltable.dnt">staffrolltable</a> <span></span><br />
+                <a href=".#dnt=stagecleardroptable.dnt">stagecleardroptable</a> <span></span><br />
+                <a href=".#dnt=stagecleartable.dnt">stagecleartable</a> <span></span><br />
+                <a href=".#dnt=stagedamagelimit.dnt">stagedamagelimit</a> <span></span><br />
+                <a href=".#dnt=stageentertable.dnt">stageentertable</a> <span></span><br />
+                <a href=".#dnt=stagerewardtable.dnt">stagerewardtable</a> <span></span><br />
+                <a href=".#dnt=stagesettable.dnt">stagesettable</a> <span></span><br />
+                <a href=".#dnt=stageweighttable.dnt">stageweighttable</a> <span></span><br />
+                <a href=".#dnt=stamptable.dnt">stamptable</a> <span></span><br />
+                <a href=".#dnt=stateeffecttable.dnt">stateeffecttable</a> <span></span><br />
+                <a href=".#dnt=storebenefittable.dnt">storebenefittable</a> <span></span><br />
+                <a href=".#dnt=summonproptable.dnt">summonproptable</a> <span></span><br />
+                <a href=".#dnt=summonskilltable.dnt">summonskilltable</a> <span></span><br />
+                <a href=".#dnt=symbolitemtable.dnt">symbolitemtable</a> <span></span><br />
+                <a href=".#dnt=talismanslottable.dnt">talismanslottable</a> <span></span><br />
+                <a href=".#dnt=talismantable.dnt">talismantable</a> <span></span><br />
+                <a href=".#dnt=talkparamtable.dnt">talkparamtable</a> <span></span><br />
+                <a href=".#dnt=taxtable.dnt">taxtable</a> <span></span><br />
+                <a href=".#dnt=tiletable.dnt">tiletable</a> <span></span><br />
+                <a href=".#dnt=timeeventtable.dnt">timeeventtable</a> <span></span><br />
+                <a href=".#dnt=titletable.dnt">titletable</a> <span></span><br />
+                <a href=".#dnt=todaytiptable.dnt">todaytiptable</a> <span></span><br />
+                <a href=".#dnt=todaytooltiptable.dnt">todaytooltiptable</a> <span></span><br />
+                <a href=".#dnt=totallevelskill.dnt">totallevelskill</a> <span></span><br />
+                <a href=".#dnt=totalskillslot.dnt">totalskillslot</a> <span></span><br />
+                <a href=".#dnt=trigervariabletable.dnt">trigervariabletable</a> <span></span><br />
+                <a href=".#dnt=typingtable.dnt">typingtable</a> <span></span><br />
+                <a href=".#dnt=uniontable.dnt">uniontable</a> <span></span><br />
+                <a href=".#dnt=vehiclepartstable.dnt">vehiclepartstable</a> <span></span><br />
+                <a href=".#dnt=vehicletable_themepark.dnt">vehicletable_themepark</a> <span></span><br />
+                <a href=".#dnt=villageallowedskilltable.dnt">villageallowedskilltable</a> <span></span><br />
+                <a href=".#dnt=vipgradetable.dnt">vipgradetable</a> <span></span><br />
+                <a href=".#dnt=viptable.dnt">viptable</a> <span></span><br />
+                <a href=".#dnt=warptable.dnt">warptable</a> <span></span><br />
+                <a href=".#dnt=weapontable.dnt">weapontable</a> <span></span><br />
+                <a href=".#dnt=weapontable_cash.dnt">weapontable_cash</a> <span></span><br />
+                <a href=".#dnt=weapontable_common2014.dnt">weapontable_common2014</a> <span></span><br />
+                <a href=".#dnt=weapontable_common2015.dnt">weapontable_common2015</a> <span></span><br />
+                <a href=".#dnt=weapontable_equipment.dnt">weapontable_equipment</a> <span></span><br />
+                <a href=".#dnt=weapontable_event.dnt">weapontable_event</a> <span></span><br />
+                <a href=".#dnt=weapontable_guild.dnt">weapontable_guild</a> <span></span><br />
+                <a href=".#dnt=weapontable_projectile.dnt">weapontable_projectile</a> <span></span><br />
+                <a href=".#dnt=weapontable_projectilemonster.dnt">weapontable_projectilemonster</a> <span></span><br />
+                <a href=".#dnt=weapontable_pvp.dnt">weapontable_pvp</a> <span></span><br />
+                <a href=".#dnt=weapontable_test.dnt">weapontable_test</a> <span></span><br />
+                <a href=".#dnt=weathertable.dnt">weathertable</a> <span></span><br />
+                <a href=".#dnt=weeklycontents.dnt">weeklycontents</a> <span></span><br />
+                <a href=".#dnt=weeklyevent.dnt">weeklyevent</a> <span></span><br />
+                <a href=".#dnt=welfaretable.dnt">welfaretable</a> <span></span><br />
+                <a href=".#dnt=wingtable_cash.dnt">wingtable_cash</a> <span></span><br />
+                <a href=".#dnt=wingtable_event.dnt">wingtable_event</a> <span></span><br />
+                <a href=".#dnt=wingtable_guild.dnt">wingtable_guild</a> <span></span><br />
+                <a href=".#dnt=worldmapui.dnt">worldmapui</a> <span></span><br />
+                <a href=".#dnt=worldmissionroomtable.dnt">worldmissionroomtab</a> <span></span><br />
+
+            </div>
+        </div>
+    </div>

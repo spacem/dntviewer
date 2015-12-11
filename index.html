@@ -1,0 +1,149 @@
+<!doctype html>
+<html>
+  <head>
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-sanitize.min.js"></script>
+    <script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
+    <script src="//cdn.jsdelivr.net/zip.js/0.1/zip.js"></script>
+    <script src="//cdn.jsdelivr.net/zip.js/0.1/inflate.js"></script>
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/ng-csv/0.3.6/ng-csv.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/ag-grid/2.3.5/ag-grid.min.js"></script>
+
+    <script src="simplerreader.js"></script>
+    <script src="fileupload.js"></script>
+    <script src="dntranslations.js"></script>
+    <script src="dntreader.js"></script>
+    <script src="dntview.js"></script>
+    <script src="dntviewer-directives.js"></script>
+    
+    <script src="dntviewer.js"></script>
+    
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
+    
+    <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/ag-grid/2.3.5/ag-grid.min.css">
+    <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/ag-grid/2.3.5/theme-fresh.min.css">
+    
+    <link rel="stylesheet" href="dntviewer.css">
+  </head>
+  
+  <body onload="dntPageInit();">
+      
+  <div ng-app="myapp" ng-controller="myctrl">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-xs-12 col-sm-8 col-lg-9">
+          <div class="row"> 
+             <div class="col-xs-12">
+                <h1>DNT Viewer <small>Look at some DNT files</small></h1>
+                <a href="hostedfiles.html">Use Hosted Files</a>
+                <form id="fileForm">
+                <div id="drop_zone" class="bg-info">
+                  Drop files here (on this) to upload<br />
+                  Or ...<br />
+                  <input type="file" id="files" />
+                  <div id="progress_bar"></div>
+                </div>
+                </form>
+                <output id="list"></output>
+             </div>
+          </div>
+
+              
+          <div class="row">
+            <div class="col-xs-12">
+            <output id="load_results"></output>
+            </div>
+          </div>
+          
+          
+          <div class="row">
+            <div class="col-xs-12">
+              <div id="myGrid" style="height: 800px" class="ag-fresh"></div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-xs-12">
+              <button class="btn btn-link" ng-click="clickFn()" ng-csv="getArray()" csv-header="getHeader()" filename="{{ filename }}.csv" field-separator="," decimal-separator=".">Download table as csv</button>
+            </div>
+            <!-- <div class="col-xs-12">
+            <div>Max Rows: <input id="itemLimit" type="text" value="5" /> <small>(do not make too high)</small>
+            <span class="checkbox"><label><input id="pivotData" type="checkbox" onClick="refreshTable();"> Pivot Data</input></label></span>
+            </div>
+            </div> -->
+          </div>
+            
+      </div>
+      <div class="col-xs-12 col-sm-4 col-lg-3">
+        <h3>Translations</h3>
+        <div id="loadTranslations">
+          <form id="tfileForm">
+          <div id="tdrop_zone" class="bg-info">
+            Drop files here (on this) to upload<br />
+            Or ...<br />
+            <input type="file" id="tfiles" />
+            <span id="tprogress_bar"></span>
+          </div>
+          </form>
+        </div>
+        
+        <h3>Auto-Translate Columns:</h3>
+        <div class="row">
+          <div class="col-xs-12 col-md-6">
+        		<form onsubmit="refreshTable();" action="javascript:void(0);">
+          	<div id="tBoxes1">
+	            <input id="translate0" class="form-control" value="NameID" type="text" />
+	            <input id="translate2" class="form-control" value="DescriptionID" type="text" />
+	            <input id="translate4" class="form-control" value="" type="text" />
+            </div>
+            </form>
+            
+            <span class="checkbox">
+    		    <label>
+    		      <input id="autoTranslate" type="checkbox" onClick="refreshTable();"> Auto Translate</input> 
+    		    </label>
+    		  </span>
+          </div>
+          <div class="col-xs-12 col-md-6">
+        		<form onsubmit="refreshTable();" action="javascript:void(0);">
+          	<div id="tBoxes2">
+	            <input id="translate1" class="form-control" value="NameIDParam" type="text" />
+	            <input id="translate3" class="form-control" value="DescriptionIDParam" type="text" />
+	            <input id="translate5" class="form-control" value="" type="text" />
+            </div>
+            </form>
+            
+            <button class="btn btn-default" onClick="addTRow();">Add</button>
+            <button class="btn btn-default" onClick="refreshTable();">Refresh</button>
+          </div>
+        </div>
+        
+        <!--
+        <h3>Filters:</h3>
+        <div class="row">
+          <div class="col-xs-6">
+        		Filter Column:
+        		<form onsubmit="refreshTable();" action="javascript:void(0);">
+        		<div id="fcolumns">
+        			<input id="filterColumn0" class="form-control" value="" type="text" />
+        		</div>
+        		</form>
+        	</div>
+        	<div class="col-xs-6">
+        		Using Value:
+        		<form onsubmit="refreshTable();" action="javascript:void(0);">
+        		<div id="fvalues">
+        			<input id="filterValue0" class="form-control" value="" type="text" />
+        		</div>
+        		</form>
+            <button class="btn btn-default" onClick="addFRow();">Add</button>
+            <button class="btn btn-default" onClick="refreshTable();">Refresh</button>
+        	</div>
+        </div>
+      -->
+      </div>
+    </div>
+  </body>
+</html>
