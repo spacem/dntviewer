@@ -13,7 +13,7 @@ var dntView = new DntView(); // gives a view onto the loaded data using filters,
 
 // helper classes for working with local files
 var dntFileUpload = new FileUpload('drop_zone','files','fileForm','list','progress_bar',processFile, true);
-var translationFileUpload = new FileUpload('tdrop_zone','tfiles','tfileform','tlist','tprogress_bar',loadTranslationFile, false);
+var translationFileUpload = new FileUpload('tdrop_zone','tfiles','tFileForm','tlist','tprogress_bar',loadTranslationFile, false);
 
 
 function updateProgress(msg) {
@@ -51,7 +51,7 @@ function loadLastData() {
             loadDnt = true;
         }
         else {
-            dntReader.loadDntFromServerFile(location + '/' + file, updateProgress, processFile);
+            dntReader.loadDntFromServerFile(location + '/' + file, updateProgress, refreshTable);
         }
     }
 
@@ -63,7 +63,7 @@ function loadLastData() {
             },
             function() {
               if(loadDnt) {
-                dntReader.loadDntFromServerFile(location + '/' + file, updateProgress, processFile);
+                dntReader.loadDntFromServerFile(location + '/' + file, updateProgress, refreshTable);
               }
             });
     }
@@ -100,11 +100,12 @@ function dntPageInit() {
         );
   }
   
-  function processFile() {
+  function processFile(data, fileName) {
       
     try
     {
-        refreshTable();
+      dntReader.processFile(data, fileName);
+      refreshTable();
     }
     catch(ex) {
         console.log(ex);
