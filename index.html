@@ -81,6 +81,7 @@
         <h3>Translations</h3>
         <div id="loadTranslations">
           <form id="tFileForm">
+          <a href="#" onclick="reloadHostedTFile();return false;">Reload hosted files</a>
           <div id="tdrop_zone" class="bg-info">
             Drop files here (on this) to upload<br />
             Or ...<br />
@@ -97,13 +98,14 @@
           	<div id="tBoxes1">
 	            <input id="translate0" class="form-control" value="NameID" type="text" />
 	            <input id="translate2" class="form-control" value="DescriptionID" type="text" />
-	            <input id="translate4" class="form-control" value="" type="text" />
+	            <input id="translate4" class="form-control" value="JobName" type="text" />
+	            <input id="translate6" class="form-control" value="" type="text" />
             </div>
             </form>
             
             <span class="checkbox">
     		    <label>
-    		      <input id="autoTranslate" type="checkbox" checked onClick="refreshTable();"> Auto Translate</input> 
+    		      <input id="autoTranslate" type="checkbox" onClick="refreshTable();"> Auto Translate</input> 
     		    </label>
     		  </span>
           </div>
@@ -113,6 +115,7 @@
 	            <input id="translate1" class="form-control" value="NameIDParam" type="text" />
 	            <input id="translate3" class="form-control" value="DescriptionIDParam" type="text" />
 	            <input id="translate5" class="form-control" value="" type="text" />
+	            <input id="translate7" class="form-control" value="" type="text" />
             </div>
             </form>
             

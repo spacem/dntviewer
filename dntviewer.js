@@ -28,18 +28,11 @@ function loadLastData() {
         return;
     }
     
-    var paramArray = paramString.substr(1).split("&");
-    var params = {};
-    for(var p=0;p<paramArray.length;++p) {
-        var keyValArray = paramArray[p].split('=');
-        if(keyValArray.length == 2) {
-            params[keyValArray[0]] = keyValArray[1]
-        }
-    }
+    var params = getParams();
     
     var file = params['dnt'];
     // var tFile = params['tfile'];
-    tFile = "uistring.xml";
+    var tFile = "uistring.xml";
     var location = params['location'];
 
     if(file == null || file.length < 5) {
@@ -68,7 +61,39 @@ function loadLastData() {
             });
     }
 }
+
+function getParams() {
+  var paramString = window.location.hash;
+  var paramArray = paramString.substr(1).split("&");
+  var params = {};
+  for(var p=0;p<paramArray.length;++p) {
+      var keyValArray = paramArray[p].split('=');
+      if(keyValArray.length == 2) {
+          params[keyValArray[0]] = keyValArray[1]
+      }
+  }
   
+  return params;
+}
+
+function reloadHostedTFile() {
+  var params = getParams();
+  var tFile = "uistring.xml";
+  var location = params['location'];
+  if(location == null) {
+    tprogress.textContent = 'location not found in url';
+  }
+  else {
+    sessionStorage.removeItem('UIStrings');
+    dnTranslations.loadDefaultFile(
+              location + '/' + tFile,
+              function(msg) {
+                tprogress.textContent = msg;
+              },
+              refreshTable);
+  }
+}
+
 function dntPageInit() {
 
   if (window.File && window.FileReader && window.FileList && window.Blob) {

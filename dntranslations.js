@@ -1,21 +1,40 @@
 function DnTranslations() {
     
-    this.data = []
+    this.data = null;
     
   this.process = function(data, callback, complete) {
-    this.data = [];
-    
+    this.data = {}
+    var numItems = 0;
+
     console.log("processing:");
     var parser = new DOMParser();
     var xmlData = parser.parseFromString(data,"text/xml");
     var elements = xmlData.getElementsByTagName("message");
     
+    // regex to remove korean translations
+    //var regEx = new RegExp('[^\u0000-\u007F]+');
+    var regEx = new RegExp('[^\x00-\x7F]+');
+    
     for(var m=0;m<elements.length;++m) {
-      var mid = elements[m].getAttribute("mid");
-      this.data[parseInt(mid)] = elements[m].textContent;
+      var text = elements[m].textContent;
+      if(!regEx.test(text))
+      {
+        var mid = elements[m].getAttribute("mid");
+        this.data[mid] = text.substring(0,200);
+        numItems++;
+      }
     }
     
-    callback('loaded ' + this.data.length.toLocaleString() + ' translations');
+    try {
+      sessionStorage.setItem('UIStrings', JSON.stringify(this.data));
+      console.log('stored ui strings for later');
+    }
+    catch (ex) {
+      console.log('error setting strings ' + ex);
+      console.log(ex.stack);
+    }
+    
+    callback('loaded ' + numItems + ' translations');
     complete();
   }
 
@@ -23,6 +42,27 @@ function DnTranslations() {
   this.loadDefaultFile = function(fileName, callback, complete) {
     
     console.log("about to load");
+    
+    try {
+      this.data = JSON.parse(sessionStorage.getItem('UIStrings'));
+      console.log('no error getting ui strings from local storage');
+    }
+    catch(ex) {
+      console.log('couldnt get ui strings ' + ex);
+      // no worries, just load the default
+    }
+    
+    if(this.data != null && typeof this.data == 'object') {
+      callback('using uistrings stored in session storage');
+      complete();
+      return;
+    }
+    else {
+      console.log('data still not set');
+      if(this.data == null) {
+        console.log('data is null');
+      }
+    }
     
     window.URL = window.URL || window.webkitURL;  // Take care of vendor prefixes.
     
@@ -87,7 +127,7 @@ function DnTranslations() {
   }
   
   this.translate = function(value) {
-      if(this.data.length == 0) {
+      if(this.data == null) {
         return value;
       }
       var result = "";
@@ -107,7 +147,7 @@ function DnTranslations() {
         result = results.join(',');
       }
       else {
-        result = this.data[parseInt(value)];
+        result = this.data[value];
         if(typeof result === 'undefined' && typeof value === 'string') {
            if(value.indexOf('{') == 0) {
             var stripped = value.replace("{", "").replace("}", "");
