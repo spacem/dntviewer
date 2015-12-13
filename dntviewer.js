@@ -44,7 +44,7 @@ function loadLastData() {
             loadDnt = true;
         }
         else {
-            dntReader.loadDntFromServerFile(location + '/' + file, updateProgress, refreshTable);
+            dntReader.loadDntFromServerFile(location + '/' + file, updateProgress, refreshTable, updateProgress);
         }
     }
 
@@ -56,8 +56,11 @@ function loadLastData() {
             },
             function() {
               if(loadDnt) {
-                dntReader.loadDntFromServerFile(location + '/' + file, updateProgress, refreshTable);
+                dntReader.loadDntFromServerFile(location + '/' + file, updateProgress, refreshTable, updateProgress);
               }
+            },
+            function(msg) {
+              tprogress.textContent = msg;
             });
     }
 }
@@ -90,7 +93,10 @@ function reloadHostedTFile() {
               function(msg) {
                 tprogress.textContent = msg;
               },
-              refreshTable);
+              refreshTable,
+              function(msg) {
+                tprogress.textContent = msg;
+              });
   }
 }
 

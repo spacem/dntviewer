@@ -56,7 +56,7 @@ function DntReader() {
   }
   
       
-    this.loadDntFromServerFile = function(fileName, statusFunc, processFileFunc) {
+    this.loadDntFromServerFile = function(fileName, statusFunc, processFileFunc, failFunc) {
       
       console.log("about to load");
       
@@ -66,7 +66,7 @@ function DntReader() {
       xhr.open('GET', fileName, true);
       xhr.responseType = 'blob';
       
-      statusFunc('downloading dnt file' + fileName);
+      statusFunc('downloading dnt file ' + fileName);
       
       var t = this;
       
@@ -116,11 +116,11 @@ function DntReader() {
           // if we get an error we can try to see if there is a zip version there
           if(fileName.toUpperCase().lastIndexOf('.DNT') == fileName.length-4) {
             var zipFileName = fileName.substr(0,fileName.length-4) + '.zip';
-            t.loadDntFromServerFile(zipFileName, statusFunc, processFileFunc);
+            t.loadDntFromServerFile(zipFileName, statusFunc, processFileFunc, failFunc);
           }
           else {
             console.log('what status' + this.status);
-            statusFunc(this.status + ': Cannot load file, couldnt load zip either: ' + fileName);
+            failFunc(this.status + ': Cannot load file, couldnt load zip either: ' + fileName);
           }
         }
       };

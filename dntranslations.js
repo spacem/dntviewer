@@ -39,7 +39,7 @@ function DnTranslations() {
   }
 
 
-  this.loadDefaultFile = function(fileName, callback, complete) {
+  this.loadDefaultFile = function(fileName, callback, complete, fail) {
     
     console.log("about to load");
     
@@ -95,11 +95,11 @@ function DnTranslations() {
           // if we get an error we can try to see if there is a zip version there
           if(fileName.toUpperCase().lastIndexOf('.XML') == fileName.length-4) {
             var zipFileName = fileName.substr(0,fileName.length-4) + '.zip';
-            t.loadDefaultFile(zipFileName, callback, complete);
+            t.loadDefaultFile(zipFileName, callback, complete, fail);
           }
           else {
             console.log('what status' + this.status);
-            callback(this.status + ': Cannot load file, couldnt load zip either: ' + fileName);
+            fail(this.status + ': Cannot load file, couldnt load zip either: ' + fileName);
           }
       }
     };
