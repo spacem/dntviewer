@@ -17,7 +17,7 @@ function DnTranslations() {
     
     for(var m=0;m<elements.length;++m) {
       var text = elements[m].textContent;
-      if(!regEx.test(text))
+      // if(!regEx.test(text))
       {
         var mid = elements[m].getAttribute("mid");
         this.data[mid] = text.substring(0,200);
