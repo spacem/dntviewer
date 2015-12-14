@@ -20,7 +20,7 @@ function DnTranslations() {
       // if(!regEx.test(text))
       {
         var mid = elements[m].getAttribute("mid");
-        this.data[mid] = text.substring(0,200);
+        this.data[mid] = text;
         numItems++;
       }
     }
