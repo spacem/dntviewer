@@ -1,6 +1,6 @@
 var myapp = angular.module('myapp', ["ngSanitize", "ngCsv", "agGrid"]);
 
-
+// this is used by the csv export
 myapp.controller('myctrl', function ($scope, $http) {
     $scope.getArray = function() {
         
