@@ -1,0 +1,53 @@
+<!doctype html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <title>DNT Column Loader</title>
+    <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+    <script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
+    <script src="//cdn.jsdelivr.net/zip.js/0.1/zip.js"></script>
+    <script src="//cdn.jsdelivr.net/zip.js/0.1/inflate.js"></script>
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+
+    <script src="simplerreader.js"></script>
+    <script src="fileupload.js"></script>
+    <script src="dntreader.js"></script>
+    
+    <script src="columnloader.js"></script>
+    
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
+
+  </head>
+  
+  <body onload="dntPageInit();">
+  <div class="container">
+    <div class="row">
+      <div class="col-xs-12">
+        <h1>DNT Column Loader <small>Load all the columns from a bunch of dnt files</small></h1>
+        <form id="fileForm">
+        <div id="drop_zone" class="bg-info">
+          Drop files here (on this) to upload<br />
+          Or ...<br />
+          <input type="file" id="files" multiple />
+          <div id="progress_bar"></div>
+        </div>
+        </form>
+        <output id="list"></output>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-xs-4">
+        <textarea id="colresults" class="form-control" rows="15" readonly></textarea>
+        <button class="btn" onclick="clearCols()">Clear</button>
+      </div>
+      <div class="col-xs-8">
+        <label>Which Files Contain a Column:</label>
+        <input type="text" id="searchText" class="form-control" oninput="search()" onblur="search()"/>
+        <div class="row" id="searchresults"></div>
+        <button class="btn btn-link" onClick="more()">more</button>
+      </div>
+    </div>
+  </div>
+  </body>
+</html>

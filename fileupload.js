@@ -17,7 +17,6 @@ function FileUpload(
   this.isBinary = isBinary;
   
   this.progress = null;
-  this.addedFile = null;
   
   this.init = function() {
     var t = this;
@@ -38,8 +37,13 @@ function FileUpload(
   
   this.handleFileSelect = function(evt) {
     var files = evt.target.files;
-    this.addedFile = files[0];
-    this.loadFile();
+    console.log('added ' + files.length);
+    
+    for(var i=0;i<files.length;++i) {
+        this.loadFile(files[i]);
+    }
+    var fileForm = document.getElementById(this.fileFormName);
+    fileForm.reset();
   }
   
   this.handleDragOver = function(evt) {
@@ -69,24 +73,24 @@ function FileUpload(
       this.progress.textContent = 'no file';
       return;
     }
-    
-    this.addedFile = files[0];
-    this.loadFile();
+
+    for(var i=0;i<files.length;++i) {
+        this.loadFile(files[i]);
+    }
   }
   
-  this.loadFile = function() {
+  this.loadFile = function(addedFile) {
+    console.log('loading uploaded file ' + addedFile);
     
     var dropZone = document.getElementById(this.dropZoneDivName);
     
-    if(this.addedFile == null) {
+    if(addedFile == null) {
       dropZone.className = "bg-danger";
       this.progress.textContent = 'no file';
       return;
     }
     
-    var fileName = this.addedFile.name;
-    var fileForm = document.getElementById(this.fileFormName);
-    fileForm.reset();
+    var fileName = addedFile.name;
     
     if(this.isBinary) {
       if(fileName.toUpperCase().lastIndexOf(".DNT") != fileName.length - 4) {
@@ -104,7 +108,6 @@ function FileUpload(
     }
     
     dropZone.className = "bg-info";
-    document.getElementById(progressDivName).textContent = '--0';
     
     var t = this;
     
@@ -117,14 +120,14 @@ function FileUpload(
       document.getElementById(progressDivName).textContent = 'loading';
     };
     reader.onload = function(e) {
-      t.processFunc(e.target.result, t.addedFile.name);
+      t.processFunc(e.target.result, addedFile.name);
     };
     
     if(this.isBinary) {
-      reader.readAsArrayBuffer(this.addedFile);
+      reader.readAsArrayBuffer(addedFile);
     }
     else  {
-      reader.readAsText(this.addedFile);
+      reader.readAsText(addedFile);
     }
   }
 

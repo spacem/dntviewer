@@ -37,6 +37,9 @@ function loadLastData() {
       tFile = location + '/' + 'uistring.xml';
     }
     
+    var columnLoaderLink = document.getElementById('columnLoaderLink');
+    columnLoaderLink.href += "#location=" + location;
+    
     if(file == null || file.length < 5) {
     }
     else {
