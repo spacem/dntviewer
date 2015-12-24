@@ -64,7 +64,7 @@ function DnTranslations() {
   
     try {
       var stringifiedData = JSON.stringify(this.data);
-      sessionStorage.setItem('UIStrings', LZString.compress(stringifiedData));
+      sessionStorage.setItem('UIStrings', LZString.compressToUTF16(stringifiedData));
       console.log('stored ui strings for later');
     }
     catch (ex) {
@@ -85,7 +85,7 @@ function DnTranslations() {
     
     try {
       this.data = null;
-      var stringifiedData = LZString.decompress(sessionStorage.getItem('UIStrings'));
+      var stringifiedData = LZString.decompressFromUTF16(sessionStorage.getItem('UIStrings'));
       this.data = JSON.parse(stringifiedData);
       console.log('no error getting ui strings from local storage');
     }
