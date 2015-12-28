@@ -40,4 +40,30 @@ function SimplerReader(pFile, startPos, littleEndian) {
     
     return retVal;
   }
+  
+  
+  this.skipUint16 = function() {
+    this.pos += 2;
+  }
+  
+  this.skipUint32 = function() {
+    this.pos += 4;
+  }
+  
+  this.skipInt32 = function() {
+    this.pos += 4;
+  }
+  
+  this.skipFloat32 = function() {
+    this.pos += 4;
+  }
+  
+  this.skipByte = function() {
+    this.pos += 1;
+  }
+  
+  this.skipString = function() {
+    var len = this.readUint16();
+    this.pos += len;
+  }
 }

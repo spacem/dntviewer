@@ -64,8 +64,8 @@ function DnTranslations() {
   
     try {
       var stringifiedData = JSON.stringify(this.data);
-      sessionStorage.setItem('UIStrings', LZString.compressToUTF16(stringifiedData));
-      console.log('stored ui strings for later');
+      localStorage.setItem('UIStrings', LZString.compressToUTF16(stringifiedData));
+      callback('stored ui strings for later');
     }
     catch (ex) {
       console.log('error setting strings ' + ex);
@@ -76,6 +76,21 @@ function DnTranslations() {
     complete();
   }
   
+  this.loadFromSession = function() {
+    try {
+      this.data = null;
+      var stringifiedData = LZString.decompressFromUTF16(localStorage.getItem('UIStrings'));
+      this.data = JSON.parse(stringifiedData);
+      console.log('no error getting ui strings from local storage');
+      return true;
+    }
+    catch(ex) {
+      console.log('couldnt get ui strings ' + ex);
+      // no worries, just load the default
+      return false;
+    }
+  }
+  
   // function to load xml file from url
   // if the file is not found we look for a zip verison and then unzip it
   // it tries to find the already loaded data in UIStrings session storage
@@ -83,22 +98,16 @@ function DnTranslations() {
   this.loadDefaultFile = function(fileName, callback, complete, fail) {
     console.log("about to load");
     
-    try {
-      this.data = null;
-      var stringifiedData = LZString.decompressFromUTF16(sessionStorage.getItem('UIStrings'));
-      this.data = JSON.parse(stringifiedData);
-      console.log('no error getting ui strings from local storage');
-    }
-    catch(ex) {
-      console.log('couldnt get ui strings ' + ex);
-      // no worries, just load the default
-    }
+    this.loadFromSession();
     
     if(this.data != null && typeof this.data == 'object') {
       callback('using uistrings stored in session storage');
       complete();
     }
-    else if(fileName != null) {
+    else if(fileName == null) {
+      callback('Translation location required');
+    }
+    else {
       console.log('data still not set');
       if(this.data == null) {
         console.log('data is null');
@@ -122,11 +131,10 @@ function DnTranslations() {
           console.log(blobv);
           
           unzipBlobToText(blobv, function(unZippedData) {
-          
-          console.log('got entry data');
-          callback('loading xml');
-          console.log("unzipped: " + unZippedData.length.toLocaleString() + " bytes");
-          t.process(unZippedData, callback, complete);
+            console.log('got entry data');
+            callback('loading xml');
+            console.log("unzipped: " + unZippedData.length.toLocaleString() + " bytes");
+            t.process(unZippedData, callback, complete);
           });
         }
         else {

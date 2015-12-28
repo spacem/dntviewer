@@ -91,7 +91,7 @@ function reloadHostedTFile() {
     tprogress.textContent = 'location not found in url';
   }
   else {
-    sessionStorage.removeItem('UIStrings');
+    localStorage.removeItem('UIStrings');
     dnTranslations.loadDefaultFile(
       location + '/' + tFile,
       function(msg) {
