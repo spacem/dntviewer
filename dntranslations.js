@@ -3,6 +3,7 @@ function DnTranslations() {
 
   // the data
   this.data = null;
+  this.sizeLimit = null;
   
   // function to lookup some string value by its id
   // this will also work with values that have a number
@@ -57,9 +58,11 @@ function DnTranslations() {
     
     for(var m=0;m<elements.length;++m) {
       var text = elements[m].textContent;
-      var mid = elements[m].getAttribute("mid");
-      this.data[mid] = text;
-      numItems++;
+      if(this.sizeLimit == null || text.length < this.sizeLimit) {
+        var mid = elements[m].getAttribute("mid");
+        this.data[mid] = text;
+        numItems++;
+      }
     }
   
     try {
@@ -79,7 +82,13 @@ function DnTranslations() {
   this.loadFromSession = function() {
     try {
       this.data = null;
-      var stringifiedData = LZString.decompressFromUTF16(localStorage.getItem('UIStrings'));
+      
+      var savedData = localStorage.getItem('UIStrings'); 
+      if(savedData == null) {
+        return false;
+      }
+      
+      var stringifiedData = LZString.decompressFromUTF16(savedData);
       this.data = JSON.parse(stringifiedData);
       console.log('no error getting ui strings from local storage');
       return true;
@@ -109,9 +118,8 @@ function DnTranslations() {
     }
     else {
       console.log('data still not set');
-      if(this.data == null) {
-        console.log('data is null');
-      }
+      
+      localStorage.setItem('UIStrings_file', fileName);
     
       var xhr = new XMLHttpRequest();
       xhr.open('GET', fileName, true);
