@@ -123,36 +123,74 @@ function DnTranslations() {
     
       var xhr = new XMLHttpRequest();
       xhr.open('GET', fileName, true);
-      xhr.responseType = 'blob';
+      if(fileName.toUpperCase().lastIndexOf('.ZIP') == fileName.length-4) {
+        xhr.responseType = 'blob';
+      }
+      else if(fileName.toUpperCase().lastIndexOf('.XML') == fileName.length-4) {
+        xhr.responseType = 'document';
+      }
+      else {
+        xhr.responseType = 'text';
+      }
       
       callback('downloading translation file ' + fileName);
       
       var t = this;
       
       xhr.onload = function(e) {
+        
         if (this.status == 200) {
           
-          callback('unziping translations');
-          console.log("reading zip");
+          callback('loading translations from ' + fileName);
+          var start = new Date().getTime();
           
           var blobv = this.response;
-          console.log(blobv);
           
-          unzipBlobToText(blobv, function(unZippedData) {
-            console.log('got entry data');
-            callback('loading xml');
-            console.log("unzipped: " + unZippedData.length.toLocaleString() + " bytes");
-            t.process(unZippedData, callback, complete);
-          });
+          console.log("reading zip");
+          if(fileName.toUpperCase().lastIndexOf('.LZJSON') == fileName.length-7) {
+            localStorage.setItem('UIStrings', blobv);
+            t.loadFromSession();
+            callback('using lzjson translations');
+            complete();
+            
+            var end = new Date().getTime();
+            var time = end - start;
+            console.log('translations process time: ' + time/1000 + 's');
+          }
+          else if(fileName.toUpperCase().lastIndexOf('.ZIP') == fileName.length-4) {
+            unzipBlobToText(blobv, function(unZippedData) {
+              console.log('got entry data');
+              callback('loading xml');
+              console.log("unzipped: " + unZippedData.length.toLocaleString() + " bytes");
+              t.process(unZippedData, callback, complete);
+            
+            var end = new Date().getTime();
+            var time = end - start;
+              console.log('translations process time: ' + time/1000 + 's');
+            });
+          }
+          else if(fileName.toUpperCase().lastIndexOf('.XML') == fileName.length-4) {
+            callback('using xml translations');
+            t.process(blobv, callback, complete);
+            
+            var end = new Date().getTime();
+            var time = end - start;
+            console.log('translations process time: ' + time/1000 + 's');
+          }
+          
         }
         else {
           // if we get an error we can try to see if there is a zip version there
-          if(fileName.toUpperCase().lastIndexOf('.XML') == fileName.length-4) {
-            var zipFileName = fileName.substr(0,fileName.length-4) + '.zip';
-            t.loadDefaultFile(zipFileName, callback, complete, fail);
+          if(fileName.toUpperCase().lastIndexOf('.LZJSON') == fileName.length-7) {
+            var baseFileName = fileName.substr(0,fileName.length-7);
+            t.loadDefaultFile(baseFileName + '.zip', callback, complete, fail);
+          }
+          else if(fileName.toUpperCase().lastIndexOf('.ZIP') == fileName.length-4) {
+            var baseFileName = fileName.substr(0,fileName.length-4);
+            t.loadDefaultFile(baseFileName + '.xml', callback, complete, fail);
           }
           else {
-            console.log('what status' + this.status);
+            console.log('what status' + this.status + ' ' + fileName);
             fail(this.status + ': Cannot load file, couldnt load zip either: ' + fileName);
           }
         }

@@ -6,62 +6,37 @@ function DntReader() {
   this.data = [];
   this.columnNames = [];
   this.columnTypes = [];
+  this.columnIndexes = [];
   this.numRows = 0;
   this.numColumns = 0;
   this.fileName = "";
   this.colsToLoad = null;
   
-  function readColumn(columnType, reader) {
-    if(columnType == 1) {
-      return reader.readString();
-    }
-    else if(columnType == 2) {
-      // bool
-      return reader.readInt32();
-    }
-    else if(columnType == 3) {
-      // int
-      return reader.readInt32();
-    }
-    else if(columnType == 4) {
-      // float
-      return reader.readFloat32();
-    }
-    else if(columnType == 5) {
-      // double
-      return reader.readFloat32();
-    }
-  }
-  
-  function skipColumn(columnType, reader) {
-    if(columnType == 1) {
-      reader.skipString();
-    }
-    else if(columnType == 2) {
-      // bool
-      reader.skipInt32();
-    }
-    else if(columnType == 3) {
-      // int
-      reader.skipInt32();
-    }
-    else if(columnType == 4) {
-      // float
-      reader.skipFloat32();
-    }
-    else if(columnType == 5) {
-      // double
-      reader.skipFloat32();
-    }
-  }
-  
   // function to populate the object with the data in the dnt file
   this.processFile = function(arrayBuffer, fileName) {
+    
+    console.log('processing file ' + fileName);
+    var start = new Date().getTime();
     
     this.fileName = fileName;
     
     // not sure if littleEndian should always be true or when it would be false
     var reader = new SimplerReader(arrayBuffer, 4, true);
+    
+    var readFuncs = [];
+    readFuncs[1] = function(reader) { return reader.readString() };
+    readFuncs[2] = function(reader) { return reader.readInt32() };
+    readFuncs[3] = function(reader) { return reader.readInt32() };
+    readFuncs[4] = function(reader) { return reader.readFloat32() };
+    readFuncs[5] = function(reader) { return reader.readFloat32() };
+    
+    var skipFuncs = [];
+    skipFuncs[1] = function(reader) { reader.skipString() };
+    skipFuncs[2] = function(reader) { reader.skipInt32() };
+    skipFuncs[3] = function(reader) { reader.skipInt32() };
+    skipFuncs[4] = function(reader) { reader.skipFloat32() };
+    skipFuncs[5] = function(reader) { reader.skipFloat32() };
+    
     this.numColumns = reader.readUint16() + 1;
     this.numRows = reader.readUint32();
     
@@ -71,23 +46,36 @@ function DntReader() {
     
     this.columnNames[0] = 'id';
     this.columnTypes[0] = 3;
+    var colReaders = [];
+    var colIsRead = [];
     var numRemovedColumns = 0;
     for(var c=1;c<this.numColumns;++c) {
       this.columnNames[c] = reader.readString().substr(1);
       this.columnTypes[c] = reader.readByte();
+      
+      if(this.colsToLoad == null || this.colsToLoad[this.columnNames[c]]) {
+        colIsRead[c] = true;
+        colReaders[c] = readFuncs[this.columnTypes[c]];
+      }
+      else {
+        colIsRead[c] = false;
+        colReaders[c] = skipFuncs[this.columnTypes[c]];
+      }
     }
     
     for(var r=0;r<this.numRows;++r) {
       
-      this.data[r] = {};
-      this.data[r]["id"] = reader.readUint32();
+      this.data[r] = [];
+      this.data[r][0] = reader.readUint32();
       
+      var colIndex = 1;
       for(var c=1;c<this.numColumns;++c) {
-        if(this.colsToLoad == null || this.colsToLoad[this.columnNames[c]]) {
-          this.data[r][this.columnNames[c]] = readColumn(this.columnTypes[c], reader);
+        if(colIsRead[c]) {
+          this.data[r][colIndex] = colReaders[c](reader);
+          colIndex++;
         }
         else {
-          skipColumn(this.columnTypes[c], reader);
+          colReaders[c](reader);
         }
       }
     }
@@ -107,6 +95,38 @@ function DntReader() {
       this.numColumns = newColumnNames.length;
       this.columnNames = newColumnNames;
       this.columnTypes = newColumnTypes;
+    }
+    
+    this.columnIndexes = {'id': 0};
+    for(var c=1;c<this.numColumns;++c) {
+      this.columnIndexes[this.columnNames[c]] = c;
+    }
+
+    var end = new Date().getTime();
+    var time = end - start;
+    console.log('dnt process time: ' + time/1000 + 's');
+  }
+  
+  this.getRow = function(index) {
+    return this.convertData(this.data[index]);
+  }
+  
+  this.convertData = function(d) {
+    var item = {id: d[0]};
+
+    for(var c=1;c<this.numColumns;++c) {
+      item[this.columnNames[c]] = d[c];
+    }
+    
+    return item;
+  }
+  
+  this.getValue = function(index, colName) {
+    if(colName in this.columnIndexes) {
+      return this.data[index][this.columnIndexes[colName]];
+    }
+    else {
+      return null;
     }
   }
   

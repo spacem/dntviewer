@@ -33,14 +33,17 @@ function SimplerReader(pFile, startPos, littleEndian) {
   this.readString = function() {
     var len = this.readUint16();
     
-    var retVal = "";
+    // var retVal = '';
+    var strings = new Array(len);
     for(var c=0;c<len;++c) {
-      retVal += String.fromCharCode(this.readByte());
+      
+      strings.push(String.fromCharCode(this.readByte()));
+      // retVal += String.fromCharCode(this.readByte());
     }
     
-    return retVal;
+    // return retVal;
+    return strings.join('');
   }
-  
   
   this.skipUint16 = function() {
     this.pos += 2;

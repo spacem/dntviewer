@@ -1,0 +1,175 @@
+<!doctype html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <title>UIString xml to json</title>
+    <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+    <script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
+    <script src="//cdn.jsdelivr.net/zip.js/0.1/zip.js"></script>
+    <script src="//cdn.jsdelivr.net/zip.js/0.1/inflate.js"></script>
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/lz-string/1.4.4/lz-string.min.js"></script>
+
+    <script src="fileupload.js"></script>
+    <script src="dntranslations.js"></script>
+    
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
+    
+    <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/ag-grid/2.3.5/ag-grid.min.css">
+    <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/ag-grid/2.3.5/theme-fresh.min.css">
+    
+    <link rel="stylesheet" href="dntviewer.css">
+  </head>
+  
+  <body onload="dntPageInit();" id="results">
+      
+  <div>
+    <div class="container-fluid">
+      <div class="row">
+
+      <div class="col-xs-12 col-sm-4 col-lg-3">
+        <h3>Translations</h3>
+        <div id="loadTranslations">
+          <form id="tFileForm">
+          <a href="#" onclick="reloadHostedTFile();return false;">Reload hosted files</a>
+          <div id="tdrop_zone" class="bg-info">
+            Drop files here (on this) to upload<br />
+            Or ...<br />
+            <input type="file" id="tfiles" />
+            <span id="tprogress_bar"></span>
+          </div>
+          </form>
+        </div>
+      </div>
+      <div class="col-xs-12">
+        <textarea id="results" style="display: none" rows="15" readonly></textarea>
+      </div>
+    </div>
+  </body>
+</html>
+
+<script>
+var addedFileName;
+var addedTFileName;
+var tprogress = null;
+var tFile = null;
+
+var dnTranslations = new DnTranslations(); // loads the uistring.xml
+dnTranslations.sizeLimit = 50;
+
+// helper classes for working with local files
+var translationFileUpload = new FileUpload('tdrop_zone','tfiles','tFileForm','tlist','tprogress_bar',loadTranslationFile, false);
+
+
+function updateProgress(msg) {
+  progress.textContent = msg;
+}
+
+function loadLastData() {
+  var tFile = null;
+  var paramString = window.location.hash; 
+  if(paramString == null || paramString.length < 2) {
+  }
+  else {
+    var params = getParams();
+    
+    var location = params['location'];
+    
+    if(location != null && location.length > 0) {
+      tFile = location + '/' + 'uistring.xml';
+    }
+    
+    var columnLoaderLink = document.getElementById('columnLoaderLink');
+    columnLoaderLink.href += "#location=" + location;
+    
+    if(file == null || file.length < 5) {
+    }
+    else {
+      var autoTranslate = document.getElementById('autoTranslate');
+      if(autoTranslate.checked) {
+        progress.textContent = "Waiting for translations to load"
+      }
+    }
+  }
+  
+  dnTranslations.loadDefaultFile(
+    tFile,
+    function(msg) {
+      tprogress.textContent = msg;
+    },
+    showTranslations,
+    function(msg) {
+      tprogress.textContent = msg;
+    });
+}
+
+function getParams() {
+  var paramString = window.location.hash;
+  var paramArray = paramString.substr(1).split("&");
+  var params = {};
+  for(var p=0;p<paramArray.length;++p) {
+    var keyValArray = paramArray[p].split('=');
+    if(keyValArray.length == 2) {
+      params[keyValArray[0]] = keyValArray[1]
+    }
+  }
+  
+  return params;
+}
+
+function reloadHostedTFile() {
+  var params = getParams();
+  var tFile = "uistring.xml";
+  var location = params['location'];
+  if(location == null) {
+    tprogress.textContent = 'location not found in url';
+  }
+  else {
+    localStorage.removeItem('UIStrings');
+    dnTranslations.loadDefaultFile(
+      location + '/' + tFile,
+      function(msg) {
+        tprogress.textContent = msg;
+      },
+      showTranslations,
+      function(msg) {
+        tprogress.textContent = msg;
+    });
+  }
+}
+
+function dntPageInit() {
+  
+  if (window.File && window.FileReader && window.FileList && window.Blob) {
+    //do your stuff!
+  } else {
+    alert('The File APIs are not fully supported by your browser.');
+  }
+  
+  tprogress = document.getElementById('tprogress_bar');
+  
+  translationFileUpload.init();
+  // loadLastData();
+}
+
+// function called by this when the translations are ready to load
+function loadTranslationFile(file, fileName) {
+  dnTranslations.process(
+    file, 
+    function(msg) {
+      tprogress.textContent = msg;
+    },
+    function() {
+      showTranslations();
+    }
+  );
+}
+
+function showTranslations() {
+  console.log('showing');
+    var resultItem = document.getElementById('results');
+    resultItem.innerHTML = JSON.stringify(dnTranslations.data); // JSON.stringify(dnTranslations.data, null, '\t');
+}
+
+</script>

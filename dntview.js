@@ -89,7 +89,7 @@ function DntView() {
       var filterFail = false;
       for(var f=0;f<numF;++f) {
         if(dntReader.columnNames.indexOf(fCols[f]) > -1) {
-          var checkVal = d[fCols[f]];
+          var checkVal = d[f];
           if(tlookup[fCols[f]]) {
             checkVal = dnTranslations.translate(checkVal);
           }
@@ -120,10 +120,10 @@ function DntView() {
         var val = "";
     
         if(tlookup[colName]) {
-          val = dnTranslations.translate(d[colName]);
+          val = dnTranslations.translate(d[c]);
         }
         else {
-          val = d[colName];
+          val = d[c];
         }
         
         retVal[retVal.length-1][c] = val;

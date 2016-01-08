@@ -157,12 +157,16 @@ function refreshTable() {
   var tLookup = dntView.getTranslateLookup();
   
   function translationGetter(params) {
-    return dnTranslations.translate(params.data[params.colDef.field]);
+    return dnTranslations.translate(params.data[params.colDef.fieldIndex]);
+  }
+  
+  function otherGetter(params) {
+    return params.data[params.colDef.fieldIndex];
   }
   
   function floatGetter(params) {
     // four decimals, then strip trailing zeros
-    var rounded = params.data[params.colDef.field].toFixed(4);
+    var rounded = params.data[params.colDef.fieldIndex].toFixed(4);
     while(rounded.length > 0 && rounded.lastIndexOf('0') == rounded.length-1) {
       rounded = rounded.substr(0,rounded.length-1);
     }
@@ -183,10 +187,14 @@ function refreshTable() {
       valueGetter = translationGetter;
       filter = 'text';
     }
+    else {
+      valueGetter = otherGetter;
+    }
     
     columnDefs[c] = {
       headerName: dntReader.columnNames[c], 
       field: dntReader.columnNames[c], 
+      fieldIndex: c,
       width: 140, 
       filter: filter, 
       valueGetter : valueGetter
