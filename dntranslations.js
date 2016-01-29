@@ -30,13 +30,18 @@ function DnTranslations() {
     }
     else {
       result = this.data[value];
-      if(typeof result === 'undefined' && typeof value === 'string') {
-        if(value.indexOf('{') == 0) {
-          var stripped = value.replace("{", "").replace("}", "");
-          result = value.replace(stripped, this.translate(stripped));
+      if(typeof result === 'undefined') {
+        if(typeof value === 'string') {
+          if(value.indexOf('{') == 0) {
+            var stripped = value.replace("{", "").replace("}", "");
+            result = value.replace(stripped, this.translate(stripped));
+          }
+          else {
+            result = value.toString();
+          }
         }
         else {
-          result = value;
+          return value;
         }
       }
     }
