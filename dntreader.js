@@ -15,7 +15,6 @@ function DntReader() {
   // function to populate the object with the data in the dnt file
   this.processFile = function(arrayBuffer, fileName) {
     
-    console.log('processing file ' + fileName);
     var start = new Date().getTime();
     
     this.fileName = fileName;
@@ -104,7 +103,7 @@ function DntReader() {
 
     var end = new Date().getTime();
     var time = end - start;
-    console.log('dnt process time: ' + time/1000 + 's');
+    console.log('dnt process time: ' + time/1000 + 's for ' + fileName);
   }
   
   this.getRow = function(index) {
@@ -134,7 +133,7 @@ function DntReader() {
   // if the file is not found it will try a zip with the same name
   this.loadDntFromServerFile = function(fileName, statusFunc, processFileFunc, failFunc) {
     
-    console.log("about to load");
+    // console.log("about to load");
     
     var xhr = new XMLHttpRequest();
     xhr.open('GET', fileName, true);
@@ -145,14 +144,14 @@ function DntReader() {
     var t = this;
     
     xhr.onload = function(e) {
-      console.log("got status");
+      // console.log("got status");
       
       if (this.status == 200) {
-        console.log("got 200 status");
+        // console.log("got 200 status");
         
         var blobv = this.response;
         if(fileName.toUpperCase().lastIndexOf(".DNT") == fileName.length-4) {
-          console.log("dnt file");
+          // console.log("dnt file");
           
           var fileReader = new FileReader();
           fileReader.onload = function(e) {
@@ -162,15 +161,15 @@ function DntReader() {
           fileReader.readAsArrayBuffer(blobv);
         }
         else {
-          console.log("zip maybe");
+          // console.log("zip maybe");
           statusFunc('unziping compressed dnt file');
           
-          console.log(blobv);
+          // console.log(blobv);
           
           unzipBlob(blobv, function(unZippedData) {
             
-            statusFunc('loading dnt');
-            console.log("unzipped: " + unZippedData.length + " bytes");
+            // statusFunc('loading dnt');
+            //console.log("unzipped: " + unZippedData.length + " bytes");
             
             var fileReader = new FileReader();
             fileReader.onload = function(e) {
@@ -188,7 +187,7 @@ function DntReader() {
           t.loadDntFromServerFile(zipFileName, statusFunc, processFileFunc, failFunc);
         }
         else {
-          console.log('what status:' + this.status);
+          console.log('what! status ' + this.status + '??');
           failFunc(this.status + ': Cannot load file, couldnt load zip either: ' + fileName);
         }
       }
