@@ -64,7 +64,7 @@ function DntReader() {
     
     for(var r=0;r<this.numRows;++r) {
       
-      this.data[r] = [];
+      this.data[r] = new Array(this.numColumns);
       this.data[r][0] = reader.readUint32();
       
       var colIndex = 1;

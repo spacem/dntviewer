@@ -32,17 +32,24 @@ function SimplerReader(pFile, startPos, littleEndian) {
   
   this.readString = function() {
     var len = this.readUint16();
-    
-    // var retVal = '';
-    var strings = new Array(len);
-    for(var c=0;c<len;++c) {
-      
-      strings.push(String.fromCharCode(this.readByte()));
-      // retVal += String.fromCharCode(this.readByte());
+    if(len == 0) {
+      return '';
     }
-    
-    // return retVal;
-    return strings.join('');
+    else if(len == 1) {
+      return String.fromCharCode(this.readByte());
+    }
+    else {
+      
+      // var retVal = '';
+      var strings = new Array(len);
+      for(var c=0;c<len;++c) {
+        
+        strings[c] = String.fromCharCode(this.readByte());
+        // retVal += String.fromCharCode(this.readByte());
+      }
+
+      return strings.join('');
+    }
   }
   
   this.skipUint16 = function() {
