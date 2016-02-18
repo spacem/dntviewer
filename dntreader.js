@@ -48,7 +48,6 @@ function DntReader() {
     this.columnTypes[0] = 3;
     var colReaders = [];
     var colIsRead = [];
-    var numRemovedColumns = 0;
     var colIndex = 1;
     var realNumCols = 0;
     
@@ -126,13 +125,11 @@ function DntReader() {
   // function to load in dnt data from a hosted file
   // if the file is not found it will try a zip with the same name
   this.loadDntFromServerFile = function(fileName, statusFunc, processFileFunc, failFunc) {
-    if(fileName.toUpperCase().lastIndexOf(".LZJSON") == fileName.length-7) {
-      var lzjsonFileName = fileName;
+    var useFileName = fileName;
+    if(this.colsToLoad == null && fileName.toUpperCase().lastIndexOf(".LZJSON") != fileName.length-7) {
+      useFileName = fileName.substr(0,fileName.length-4) + '.lzjson';
     }
-    else {
-      var lzjsonFileName = fileName.substr(0,fileName.length-4) + '.lzjson';
-    }
-    this.loadDntFromServerFileImpl(lzjsonFileName, statusFunc, processFileFunc, failFunc);
+    this.loadDntFromServerFileImpl(useFileName, statusFunc, processFileFunc, failFunc);
   }
   
   this.loadDntFromServerFileImpl = function(fileName, statusFunc, processFileFunc, failFunc) {
