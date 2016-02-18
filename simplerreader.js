@@ -1,5 +1,6 @@
 function SimplerReader(pFile, startPos, littleEndian) {
 // module to track position while reading binary data
+'use strict';
   
   this.pos = startPos;
   this.file = new DataView(pFile);

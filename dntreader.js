@@ -2,6 +2,7 @@ function DntReader() {
 // module for to allow reading of dnt data from dnt files
 // right now this simply loads the whole file into the data property
 // data is an array of objects eg [{id: "123",NameParam: "456"}]
+'use strict';
   
   this.data = [];
   this.columnNames = [];
@@ -48,26 +49,34 @@ function DntReader() {
     var colReaders = [];
     var colIsRead = [];
     var numRemovedColumns = 0;
+    var colIndex = 1;
+    var realNumCols = 0;
+    
     for(var c=1;c<this.numColumns;++c) {
-      this.columnNames[c] = reader.readString().substr(1);
-      this.columnTypes[c] = reader.readByte();
+      var colName = reader.readString().substr(1);
+      var colType = reader.readByte();
       
-      if(this.colsToLoad == null || this.colsToLoad[this.columnNames[c]]) {
+      if(this.colsToLoad == null || this.colsToLoad[colName]) {
         colIsRead[c] = true;
-        colReaders[c] = readFuncs[this.columnTypes[c]];
+        colReaders[c] = readFuncs[colType];
+
+        this.columnNames[colIndex] = colName;
+        this.columnTypes[colIndex] = colType;
+        colIndex++;
       }
       else {
         colIsRead[c] = false;
-        colReaders[c] = skipFuncs[this.columnTypes[c]];
+        colReaders[c] = skipFuncs[colType];
       }
     }
+    realNumCols = colIndex;
     
     for(var r=0;r<this.numRows;++r) {
       
-      this.data[r] = new Array(this.numColumns);
+      this.data[r] = new Array(realNumCols);
       this.data[r][0] = reader.readUint32();
       
-      var colIndex = 1;
+      colIndex = 1;
       for(var c=1;c<this.numColumns;++c) {
         if(colIsRead[c]) {
           this.data[r][colIndex] = colReaders[c](reader);
@@ -79,23 +88,8 @@ function DntReader() {
       }
     }
     
-    if(this.colsToLoad != null) {
+    this.numColumns = realNumCols;
 
-      var newColumnNames = ['id'];
-      var newColumnTypes = [3];
-      
-      for(var c=1;c<this.numColumns;++c) {
-        if(this.colsToLoad[this.columnNames[c]]) {
-          newColumnNames.push(this.columnNames[c]);
-          newColumnTypes.push(this.columnTypes[c]);
-        }
-      }
-      
-      this.numColumns = newColumnNames.length;
-      this.columnNames = newColumnNames;
-      this.columnTypes = newColumnTypes;
-    }
-    
     this.columnIndexes = {'id': 0};
     for(var c=1;c<this.numColumns;++c) {
       this.columnIndexes[this.columnNames[c]] = c;
@@ -132,12 +126,29 @@ function DntReader() {
   // function to load in dnt data from a hosted file
   // if the file is not found it will try a zip with the same name
   this.loadDntFromServerFile = function(fileName, statusFunc, processFileFunc, failFunc) {
+    if(fileName.toUpperCase().lastIndexOf(".LZJSON") == fileName.length-7) {
+      var lzjsonFileName = fileName;
+    }
+    else {
+      var lzjsonFileName = fileName.substr(0,fileName.length-4) + '.lzjson';
+    }
+    this.loadDntFromServerFileImpl(lzjsonFileName, statusFunc, processFileFunc, failFunc);
+  }
+  
+  this.loadDntFromServerFileImpl = function(fileName, statusFunc, processFileFunc, failFunc) {
     
     // console.log("about to load");
+    var isLzJson = (fileName.toUpperCase().lastIndexOf(".LZJSON") == fileName.length-7);
     
     var xhr = new XMLHttpRequest();
     xhr.open('GET', fileName, true);
-    xhr.responseType = 'blob';
+    
+    if(isLzJson) {
+      xhr.responseType = 'text';
+    }
+    else {
+      xhr.responseType = 'blob';
+    }
     
     statusFunc('downloading dnt file ' + fileName);
     
@@ -160,6 +171,21 @@ function DntReader() {
           };
           fileReader.readAsArrayBuffer(blobv);
         }
+        else if(isLzJson) {
+          console.log("lz file");
+          var stringifiedData = LZString.decompressFromUTF16(blobv);
+          var dlData = JSON.parse(stringifiedData);
+          
+          t.data = dlData.data;
+          t.numRows = dlData.numRows;
+          t.numColumns = dlData.numColumns;
+          t.fileName = fileName;
+          t.columnIndexes = dlData.columnIndexes;
+          t.columnNames = dlData.columnNames;
+          t.columnTypes = dlData.columnTypes;
+          
+          processFileFunc();
+        }
         else {
           // console.log("zip maybe");
           statusFunc('unziping compressed dnt file');
@@ -174,7 +200,7 @@ function DntReader() {
             var fileReader = new FileReader();
             fileReader.onload = function(e) {
               t.processFile(e.target.result, fileName);
-              processFileFunc(e.target.result, fileName);
+              processFileFunc();
             };
             fileReader.readAsArrayBuffer(unZippedData);
           });
@@ -182,9 +208,13 @@ function DntReader() {
       }
       else {
         // if we get an error we can try to see if there is a zip version there
-        if(fileName.toUpperCase().lastIndexOf('.DNT') == fileName.length-4) {
-          var zipFileName = fileName.substr(0,fileName.length-4) + '.zip';
-          t.loadDntFromServerFile(zipFileName, statusFunc, processFileFunc, failFunc);
+        if(fileName.toUpperCase().lastIndexOf('.LZJSON') == fileName.length-7) {
+          var dntFileName = fileName.substr(0,fileName.length-7) + '.zip';
+          t.loadDntFromServerFileImpl(dntFileName, statusFunc, processFileFunc, failFunc);
+        }
+        else if(fileName.toUpperCase().lastIndexOf('.DNT') == fileName.length-4) {
+          var zipFileName = fileName.substr(0,fileName.length-4) + '.lzjson';
+          t.loadDntFromServerFileImpl(zipFileName, statusFunc, processFileFunc, failFunc);
         }
         else {
           console.log('what! status ' + this.status + '??');
