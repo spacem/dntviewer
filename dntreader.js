@@ -209,11 +209,13 @@ function DntReader() {
       else {
         // if we get an error we can try to see if there is a zip version there
         if(fileName.toUpperCase().lastIndexOf('.LZJSON') == fileName.length-7) {
-          var dntFileName = fileName.substr(0,fileName.length-7) + '.zip';
+          console.log('trying dnt');
+          var dntFileName = fileName.substr(0,fileName.length-7) + '.dnt';
           t.loadDntFromServerFileImpl(dntFileName, statusFunc, processFileFunc, failFunc);
         }
         else if(fileName.toUpperCase().lastIndexOf('.DNT') == fileName.length-4) {
-          var zipFileName = fileName.substr(0,fileName.length-4) + '.lzjson';
+          console.log('trying zip');
+          var zipFileName = fileName.substr(0,fileName.length-4) + '.zip';
           t.loadDntFromServerFileImpl(zipFileName, statusFunc, processFileFunc, failFunc);
         }
         else {
