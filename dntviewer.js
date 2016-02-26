@@ -85,7 +85,7 @@ function getParams() {
 
 function reloadHostedTFile() {
   var params = getParams();
-  var tFile = "uistring.xml";
+  var tFile = "uistring.lzjson";
   var location = params['location'];
   if(location == null) {
     tprogress.textContent = 'location not found in url';
