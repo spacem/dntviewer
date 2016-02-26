@@ -9,12 +9,12 @@ function DnTranslations() {
   // this will also work with values that have a number
   // of mids enclosed in curly brackets
   this.translate = function(value) {
-    if(this.data == null) {
+    if(this.data === null) {
       return value;
     }
     var result = "";
     
-    if(value == 0 || value == "" || value == null) {
+    if(value === 0 || value === "" || value === null) {
       result = value;
     }
     else if(value.toString().indexOf(',') > -1) {
@@ -63,7 +63,7 @@ function DnTranslations() {
     
     for(var m=0;m<elements.length;++m) {
       var text = elements[m].textContent;
-      if(this.sizeLimit == null || text.length < this.sizeLimit) {
+      if(this.sizeLimit === null || text.length < this.sizeLimit) {
         var mid = elements[m].getAttribute("mid");
         this.data[mid] = text;
         numItems++;
@@ -72,7 +72,7 @@ function DnTranslations() {
   
     try {
       var stringifiedData = JSON.stringify(this.data);
-      localStorage.setItem('UIStrings', LZString.compressToUTF16(stringifiedData));
+      sessionStorage.setItem('UIStrings', LZString.compressToUTF16(stringifiedData));
       callback('stored ui strings for later');
     }
     catch (ex) {
@@ -88,8 +88,8 @@ function DnTranslations() {
     try {
       this.data = null;
       
-      var savedData = localStorage.getItem('UIStrings'); 
-      if(savedData == null) {
+      var savedData = sessionStorage.getItem('UIStrings'); 
+      if(savedData === null) {
         return false;
       }
       
@@ -114,11 +114,11 @@ function DnTranslations() {
     
     this.loadFromSession();
     
-    if(this.data != null && typeof this.data == 'object') {
-      callback('using uistrings stored in session storage');
+    if(this.data != null && typeof this.data === 'object') {
+      callback('using uistrings stored in local storage');
       complete();
     }
-    else if(fileName == null) {
+    else if(fileName === null) {
       callback('Translation location required');
     }
     else {
@@ -128,10 +128,10 @@ function DnTranslations() {
     
       var xhr = new XMLHttpRequest();
       xhr.open('GET', fileName, true);
-      if(fileName.toUpperCase().lastIndexOf('.ZIP') == fileName.length-4) {
+      if(fileName.toUpperCase().lastIndexOf('.ZIP') === fileName.length-4) {
         xhr.responseType = 'blob';
       }
-      else if(fileName.toUpperCase().lastIndexOf('.XML') == fileName.length-4) {
+      else if(fileName.toUpperCase().lastIndexOf('.XML') === fileName.length-4) {
         xhr.responseType = 'document';
       }
       else {
@@ -144,7 +144,7 @@ function DnTranslations() {
       
       xhr.onload = function(e) {
         
-        if (this.status == 200) {
+        if (this.status === 200) {
           
           callback('loading translations from ' + fileName);
           var start = new Date().getTime();
@@ -152,8 +152,8 @@ function DnTranslations() {
           var blobv = this.response;
           
           console.log("reading zip");
-          if(fileName.toUpperCase().lastIndexOf('.LZJSON') == fileName.length-7) {
-            localStorage.setItem('UIStrings', blobv);
+          if(fileName.toUpperCase().lastIndexOf('.LZJSON') === fileName.length-7) {
+            sessionStorage.setItem('UIStrings', blobv);
             t.loadFromSession();
             callback('using lzjson translations');
             complete();
@@ -162,7 +162,7 @@ function DnTranslations() {
             var time = end - start;
             console.log('translations process time: ' + time/1000 + 's');
           }
-          else if(fileName.toUpperCase().lastIndexOf('.ZIP') == fileName.length-4) {
+          else if(fileName.toUpperCase().lastIndexOf('.ZIP') === fileName.length-4) {
             unzipBlobToText(blobv, function(unZippedData) {
               console.log('got entry data');
               callback('loading xml');
@@ -174,7 +174,7 @@ function DnTranslations() {
               console.log('translations process time: ' + time/1000 + 's');
             });
           }
-          else if(fileName.toUpperCase().lastIndexOf('.XML') == fileName.length-4) {
+          else if(fileName.toUpperCase().lastIndexOf('.XML') === fileName.length-4) {
             callback('using xml translations');
             t.process(blobv, callback, complete);
             
@@ -186,11 +186,11 @@ function DnTranslations() {
         }
         else {
           // if we get an error we can try to see if there is a zip version there
-          if(fileName.toUpperCase().lastIndexOf('.LZJSON') == fileName.length-7) {
+          if(fileName.toUpperCase().lastIndexOf('.LZJSON') === fileName.length-7) {
             var baseFileName = fileName.substr(0,fileName.length-7);
             t.loadDefaultFile(baseFileName + '.zip', callback, complete, fail);
           }
-          else if(fileName.toUpperCase().lastIndexOf('.ZIP') == fileName.length-4) {
+          else if(fileName.toUpperCase().lastIndexOf('.ZIP') === fileName.length-4) {
             var baseFileName = fileName.substr(0,fileName.length-4);
             t.loadDefaultFile(baseFileName + '.xml', callback, complete, fail);
           }

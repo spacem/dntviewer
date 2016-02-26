@@ -33,10 +33,10 @@ function SimplerReader(pFile, startPos, littleEndian) {
   
   this.readString = function() {
     var len = this.readUint16();
-    if(len == 0) {
+    if(len === 0) {
       return '';
     }
-    else if(len == 1) {
+    else if(len === 1) {
       return String.fromCharCode(this.readByte());
     }
     else {

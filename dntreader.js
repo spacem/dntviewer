@@ -55,7 +55,7 @@ function DntReader() {
       var colName = reader.readString().substr(1);
       var colType = reader.readByte();
       
-      if(this.colsToLoad == null || this.colsToLoad[colName]) {
+      if(this.colsToLoad === null || this.colsToLoad[colName]) {
         colIsRead[c] = true;
         colReaders[c] = readFuncs[colType];
 
@@ -126,7 +126,7 @@ function DntReader() {
   // if the file is not found it will try a zip with the same name
   this.loadDntFromServerFile = function(fileName, statusFunc, processFileFunc, failFunc) {
     var useFileName = fileName;
-    if(this.colsToLoad == null && fileName.toUpperCase().lastIndexOf(".LZJSON") != fileName.length-7) {
+    if(this.colsToLoad === null && fileName.toUpperCase().lastIndexOf(".LZJSON") != fileName.length-7) {
       useFileName = fileName.substr(0,fileName.length-4) + '.lzjson';
     }
     this.loadDntFromServerFileImpl(useFileName, statusFunc, processFileFunc, failFunc);
@@ -148,29 +148,35 @@ function DntReader() {
     }
     
     statusFunc('downloading dnt file ' + fileName);
+    var start = new Date().getTime();
     
     var t = this;
     
     xhr.onload = function(e) {
       // console.log("got status");
       
-      if (this.status == 200) {
+      if (this.status === 200) {
         // console.log("got 200 status");
         
         var blobv = this.response;
-        if(fileName.toUpperCase().lastIndexOf(".DNT") == fileName.length-4) {
+        if(fileName.toUpperCase().lastIndexOf(".DNT") === fileName.length-4) {
           // console.log("dnt file");
           
           var fileReader = new FileReader();
           fileReader.onload = function(e) {
             t.processFile(e.target.result, fileName);
             processFileFunc();
+            
+            var end = new Date().getTime();
+            var time = end - start;
+            console.log('dnt time: ' + time/1000 + 's for ' + fileName);
           };
           fileReader.readAsArrayBuffer(blobv);
         }
         else if(isLzJson) {
           console.log("lz file");
           var stringifiedData = LZString.decompressFromUTF16(blobv);
+
           var dlData = JSON.parse(stringifiedData);
           
           t.data = dlData.data;
@@ -182,6 +188,10 @@ function DntReader() {
           t.columnTypes = dlData.columnTypes;
           
           processFileFunc();
+            
+          var end = new Date().getTime();
+          var time = end - start;
+          console.log('lzjson time: ' + time/1000 + 's for ' + fileName);
         }
         else {
           // console.log("zip maybe");
@@ -198,6 +208,10 @@ function DntReader() {
             fileReader.onload = function(e) {
               t.processFile(e.target.result, fileName);
               processFileFunc();
+            
+              var end = new Date().getTime();
+              var time = end - start;
+              console.log('zip time: ' + time/1000 + 's for ' + fileName);
             };
             fileReader.readAsArrayBuffer(unZippedData);
           });
@@ -205,12 +219,12 @@ function DntReader() {
       }
       else {
         // if we get an error we can try to see if there is a zip version there
-        if(fileName.toUpperCase().lastIndexOf('.LZJSON') == fileName.length-7) {
+        if(fileName.toUpperCase().lastIndexOf('.LZJSON') === fileName.length-7) {
           console.log('trying dnt');
           var dntFileName = fileName.substr(0,fileName.length-7) + '.dnt';
           t.loadDntFromServerFileImpl(dntFileName, statusFunc, processFileFunc, failFunc);
         }
-        else if(fileName.toUpperCase().lastIndexOf('.DNT') == fileName.length-4) {
+        else if(fileName.toUpperCase().lastIndexOf('.DNT') === fileName.length-4) {
           console.log('trying zip');
           var zipFileName = fileName.substr(0,fileName.length-4) + '.zip';
           t.loadDntFromServerFileImpl(zipFileName, statusFunc, processFileFunc, failFunc);
