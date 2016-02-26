@@ -165,11 +165,11 @@ function DntReader() {
           var fileReader = new FileReader();
           fileReader.onload = function(e) {
             t.processFile(e.target.result, fileName);
-            processFileFunc();
             
             var end = new Date().getTime();
             var time = end - start;
             console.log('dnt time: ' + time/1000 + 's for ' + fileName);
+            processFileFunc();
           };
           fileReader.readAsArrayBuffer(blobv);
         }
@@ -187,11 +187,10 @@ function DntReader() {
           t.columnNames = dlData.columnNames;
           t.columnTypes = dlData.columnTypes;
           
-          processFileFunc();
-            
           var end = new Date().getTime();
           var time = end - start;
           console.log('lzjson time: ' + time/1000 + 's for ' + fileName);
+          processFileFunc();
         }
         else {
           // console.log("zip maybe");
@@ -207,11 +206,11 @@ function DntReader() {
             var fileReader = new FileReader();
             fileReader.onload = function(e) {
               t.processFile(e.target.result, fileName);
-              processFileFunc();
             
               var end = new Date().getTime();
               var time = end - start;
               console.log('zip time: ' + time/1000 + 's for ' + fileName);
+              processFileFunc();
             };
             fileReader.readAsArrayBuffer(unZippedData);
           });
