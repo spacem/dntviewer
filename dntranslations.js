@@ -56,7 +56,7 @@ function DnTranslations() {
     this.data = {}
     var numItems = 0;
     
-    console.log("processing:");
+    // console.log("processing:");
     var parser = new DOMParser();
     var xmlData = parser.parseFromString(xmlFileAsString,"text/xml");
     var elements = xmlData.getElementsByTagName("message");
@@ -95,7 +95,7 @@ function DnTranslations() {
       
       var stringifiedData = LZString.decompressFromUTF16(savedData);
       this.data = JSON.parse(stringifiedData);
-      console.log('no error getting ui strings from local storage');
+      console.log('got ui strings from local storage');
       return true;
     }
     catch(ex) {
@@ -110,7 +110,7 @@ function DnTranslations() {
   // it tries to find the already loaded data in UIStrings session storage
   // and uses this if it can
   this.loadDefaultFile = function(fileName, callback, complete, fail) {
-    console.log("about to load");
+    // console.log("about to load");
     
     this.loadFromSession();
     

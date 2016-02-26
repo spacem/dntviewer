@@ -174,7 +174,7 @@ function DntReader() {
           fileReader.readAsArrayBuffer(blobv);
         }
         else if(isLzJson) {
-          console.log("lz file");
+          // console.log("lz file");
           var stringifiedData = LZString.decompressFromUTF16(blobv);
 
           var dlData = JSON.parse(stringifiedData);
