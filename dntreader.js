@@ -107,7 +107,9 @@ function DntReader() {
     var item = {id: d[0]};
 
     for(var c=1;c<this.numColumns;++c) {
-      item[this.columnNames[c]] = d[c];
+      if(d[c] != null) {
+        item[this.columnNames[c]] = d[c];
+      }
     }
     
     return item;
@@ -174,18 +176,7 @@ function DntReader() {
           fileReader.readAsArrayBuffer(blobv);
         }
         else if(isLzJson) {
-          // console.log("lz file");
-          var stringifiedData = LZString.decompressFromUTF16(blobv);
-
-          var dlData = JSON.parse(stringifiedData);
-          
-          t.data = dlData.data;
-          t.numRows = dlData.numRows;
-          t.numColumns = dlData.numColumns;
-          t.fileName = fileName;
-          t.columnIndexes = dlData.columnIndexes;
-          t.columnNames = dlData.columnNames;
-          t.columnTypes = dlData.columnTypes;
+          t.processLzFile(blobv, fileName);
           
           var end = new Date().getTime();
           var time = end - start;
@@ -236,6 +227,20 @@ function DntReader() {
     };
     
     xhr.send();
+  }
+  
+  this.processLzFile = function(blobv, fileName) {
+    var stringifiedData = LZString.decompressFromUTF16(blobv);
+
+    var dlData = JSON.parse(stringifiedData);
+    
+    this.data = dlData.data;
+    this.numRows = dlData.numRows;
+    this.numColumns = dlData.numColumns;
+    this.fileName = fileName;
+    this.columnIndexes = dlData.columnIndexes;
+    this.columnNames = dlData.columnNames;
+    this.columnTypes = dlData.columnTypes;
   }
   
   function unzipBlob(blob, callback) {
