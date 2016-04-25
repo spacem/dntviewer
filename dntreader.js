@@ -235,12 +235,17 @@ function DntReader() {
     var dlData = JSON.parse(stringifiedData);
     
     this.data = dlData.data;
-    this.numRows = dlData.numRows;
-    this.numColumns = dlData.numColumns;
     this.fileName = fileName;
-    this.columnIndexes = dlData.columnIndexes;
     this.columnNames = dlData.columnNames;
     this.columnTypes = dlData.columnTypes;
+    
+    this.numRows = this.data.length;
+    this.numColumns = dlData.columnNames.length;
+    
+    this.columnIndexes = {'id': 0};
+    for(var c=1;c<this.numColumns;++c) {
+      this.columnIndexes[this.columnNames[c]] = c;
+    }
   }
   
   function unzipBlob(blob, callback) {
