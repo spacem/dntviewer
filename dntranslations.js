@@ -41,8 +41,11 @@ function DnTranslations() {
           }
         }
         else {
-          return value;
+          result = value;
         }
+      }
+      else if(typeof value === 'string' && result.indexOf('#N/A') == 0) {
+        result = '';
       }
     }
     
