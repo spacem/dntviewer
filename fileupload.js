@@ -4,8 +4,7 @@ function FileUpload(
   fileFormName,
   fileDetailDivName,
   progressDivName,
-  processFunc,
-  isBinary) {
+  processFunc) {
 // module used to handle dropping of files or browsing of files
   
   this.dropZoneDivName = dropZoneDivName;
@@ -14,7 +13,6 @@ function FileUpload(
   this.fileFormName = fileFormName;
   this.progressDivName = progressDivName;
   this.processFunc = processFunc;
-  this.isBinary = isBinary;
   
   this.progress = null;
   
@@ -92,16 +90,12 @@ function FileUpload(
     
     var fileName = addedFile.name;
     
-    if(this.isBinary) {
-      if(fileName.toUpperCase().lastIndexOf(".DNT") != fileName.length - 4) {
-        dropZone.className = "bg-danger";
-        this.progress.textContent = 'not a DNT file';
-        return;
-      }
-    }
-    else{
-      if(fileName.toUpperCase().lastIndexOf(".XML") != fileName.length - 4) {
-        this.progress.textContent = 'not an XML file';
+    this.isBinary = (fileName.toUpperCase().lastIndexOf(".DNT") == fileName.length-4);
+    
+    if(!this.isBinary) {
+      if(fileName.toUpperCase().lastIndexOf(".LZJSON") != fileName.length - 7 &&
+        fileName.toUpperCase().lastIndexOf(".XML") != fileName.length - 4) {
+        this.progress.textContent = 'not a valid file extension';
         dropZone.className = "bg-danger";
         return;
       }
@@ -120,6 +114,7 @@ function FileUpload(
       document.getElementById(progressDivName).textContent = 'loading';
     };
     reader.onload = function(e) {
+      console.log('loading file ', addedFile.name);
       t.processFunc(e.target.result, addedFile.name);
     };
     

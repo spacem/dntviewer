@@ -1,10 +1,5 @@
-var addedFileName;
-var addedTFileName;
-var reader = null;
 var progress = null;
 var tprogress = null;
-var dataFile = null;
-var tFile = null;
 var gridOptions = null;
 
 var dntReader = new DntReader(); // loads the binary data
@@ -12,8 +7,8 @@ var dnTranslations = new DnTranslations(); // loads the uistring.xml
 var dntView = new DntView(); // gives a view onto the loaded data using filters, etc
 
 // helper classes for working with local files
-var dntFileUpload = new FileUpload('drop_zone','files','fileForm','list','progress_bar',processFile, true);
-var translationFileUpload = new FileUpload('tdrop_zone','tfiles','tFileForm','tlist','tprogress_bar',loadTranslationFile, false);
+var dntFileUpload = new FileUpload('drop_zone','files','fileForm','list','progress_bar',processFile);
+var translationFileUpload = new FileUpload('tdrop_zone','tfiles','tFileForm','tlist','tprogress_bar',loadTranslationFile);
 
 
 function updateProgress(msg) {
@@ -30,11 +25,10 @@ function loadLastData() {
     var params = getParams();
     
     var file = params['dnt'];
-    // var tFile = params['tfile'];
     var location = params['location'];
     
     if(location != null && location.length > 0) {
-      tFile = location + '/' + 'uistring.xml';
+      tFile = location + '/' + 'uistring.lzjson';
     }
     
     var columnLoaderLink = document.getElementById('columnLoaderLink');
@@ -139,11 +133,18 @@ function loadTranslationFile(file, fileName) {
 function processFile(data, fileName) {
   try
   {
-    dntReader.processFile(data, fileName);
+    var isLzJson = (fileName.toUpperCase().lastIndexOf(".LZJSON") == fileName.length-7);
+    if(isLzJson) {
+      console.log('loading lz');
+      dntReader.processLzFile(data.toString(), fileName);
+    }
+    else {
+      dntReader.processFile(data, fileName);
+    }
     refreshTable();
   }
   catch(ex) {
-    console.log(ex);
+    console.log(ex, ex.stack);
     progress.textContent = "Load failed";
   }
 }
@@ -166,11 +167,16 @@ function refreshTable() {
   
   function floatGetter(params) {
     // four decimals, then strip trailing zeros
-    var rounded = params.data[params.colDef.fieldIndex].toFixed(4);
-    while(rounded.length > 0 && rounded.lastIndexOf('0') == rounded.length-1) {
-      rounded = rounded.substr(0,rounded.length-1);
+    if(params.colDef.fieldIndex in params.data) {
+      var value = params.data[params.colDef.fieldIndex];
+      if(value && value.toFixed) {
+        var rounded = value.toFixed(4);
+        while(rounded.length > 0 && rounded.lastIndexOf('0') == rounded.length-1) {
+          rounded = rounded.substr(0,rounded.length-1);
+        }
+        return rounded;
+      }
     }
-    return rounded;
   }
   
   for(var c=0;c<numCols;++c) {
@@ -201,25 +207,29 @@ function refreshTable() {
     };
   }
   
-  if(gridOptions != null) {
-    gridOptions.api.destroy();
+  if(gridOptions == null) {
+    gridOptions = {
+      columnDefs: columnDefs,
+      rowData: dntReader.data,
+      enableFilter: true,
+      enableSorting: true,
+      showToolPanel: true,
+      enableColResize: true,
+      newRowsAction: 'keep',
+    };
+  
+    // api.destroy();
+    agGridGlobalFunc('#myGrid', gridOptions);
+  }
+  else {
+    gridOptions.api.setColumnDefs(columnDefs);
+    gridOptions.api.setRowData(dntReader.data);
   }
   
-  gridOptions = {
-    columnDefs: columnDefs,
-    rowData: dntReader.data,
-    enableFilter: true,
-    enableSorting: true,
-    showToolPanel: true,
-    enableColResize: true,
-  };
-  
+  document.title = dntReader.fileName.replace('https://', '').replace('http://', '').replace('.lzjson','').replace('.firebaseapp.com/', ' ') + ' (dntviewer)';
   var resultHtml = '<h2>' + dntReader.fileName  + ' <small>' + dntReader.numRows + ' rows in total</small> ';
   var loadResults = document.getElementById('load_results');
   loadResults.innerHTML = resultHtml;
-  
-  // api.destroy();
-  agGridGlobalFunc('#myGrid', gridOptions);
   
   progress.textContent = "Loaded";
 }
