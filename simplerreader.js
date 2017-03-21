@@ -23,7 +23,8 @@ function SimplerReader(pFile, startPos, littleEndian) {
   
   this.readFloat32 = function() {
     this.pos += 4;
-    return this.file.getFloat32(this.pos-4, this.littleEndian);
+    var floatVal = this.file.getFloat32(this.pos-4, this.littleEndian);
+    return Math.round(floatVal*100000)/100000;
   }
   
   this.readByte = function() {
@@ -48,8 +49,13 @@ function SimplerReader(pFile, startPos, littleEndian) {
         strings[c] = String.fromCharCode(this.readByte());
         // retVal += String.fromCharCode(this.readByte());
       }
+      
+      var val = strings.join('');
+      if(val && val.length > 6 && val.indexOf('.') > 0 && !isNaN(val)) {
+        return Math.round(Number(val)*100000)/100000;
+      }
 
-      return strings.join('');
+      return val;
     }
   }
   

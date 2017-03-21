@@ -154,6 +154,16 @@ function DntReader() {
     
     var t = this;
     
+    xhr.onerror = function(e) {
+      console.log('what! error ', e);
+      failFunc('Cannot load file' + e);
+    }
+    
+    xhr.ontimeout = function(e) {
+      console.log('what! timeout ', e);
+      failFunc('Timeout loading file' + e);
+    }
+    
     xhr.onload = function(e) {
       // console.log("got status");
       
